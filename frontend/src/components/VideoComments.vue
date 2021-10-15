@@ -1,0 +1,275 @@
+<style lang="css" css-build-single="">
+    @import "../../overall.css";
+</style>
+
+<template>
+    <ytd-comments id="comments" class="style-scope ytd-watch-flexy">
+        <!--css-build:shady-->
+        <ytd-item-section-renderer
+            id="sections"
+            initial-count="2"
+            class="style-scope ytd-comments">
+            <!--css-build:shady-->
+            <div id="header" class="style-scope ytd-item-section-renderer">
+                <ytd-comments-header-renderer class="style-scope ytd-item-section-renderer">
+                    <!--css-build:shady-->
+                    <div id="title" class="style-scope ytd-comments-header-renderer">
+                        <h2 id="count" class="style-scope ytd-comments-header-renderer">
+                            <yt-formatted-string
+                                class="count-text style-scope ytd-comments-header-renderer">
+                                <span dir="auto" class="style-scope yt-formatted-string">댓글
+                                </span>
+                                <span dir="auto" class="style-scope yt-formatted-string">89</span>
+                                <span dir="auto" class="style-scope yt-formatted-string">개</span>
+                            </yt-formatted-string>
+                        </h2>
+                        <span id="sort-menu" class="style-scope ytd-comments-header-renderer">
+                            <yt-sort-filter-sub-menu-renderer
+                                class="style-scope ytd-comments-header-renderer">
+                                <!--css-build:shady-->
+                                <tp-yt-paper-tooltip
+                                    class="style-scope yt-sort-filter-sub-menu-renderer"
+                                    role="tooltip"
+                                    tabindex="-1">
+                                    <!--css-build:shady-->
+                                    <div id="tooltip" class="hidden style-scope tp-yt-paper-tooltip">
+                                        댓글 정렬
+                                    </div>
+                                </tp-yt-paper-tooltip>
+                                <yt-dropdown-menu
+                                    class="style-scope yt-sort-filter-sub-menu-renderer has-items">
+                                    <!--css-build:shady-->
+                                    <tp-yt-paper-menu-button
+                                        dynamic-align=""
+                                        class="style-scope yt-dropdown-menu"
+                                        role="group"
+                                        aria-haspopup="true"
+                                        horizontal-align="left"
+                                        vertical-align="top"
+                                        aria-disabled="false">
+                                        <!--css-build:shady-->
+                                        <div id="trigger" class="style-scope tp-yt-paper-menu-button">
+                                            <tp-yt-paper-button
+                                                id="label"
+                                                class="dropdown-trigger style-scope yt-dropdown-menu"
+                                                slot="dropdown-trigger"
+                                                aria-expanded="false"
+                                                role="button"
+                                                tabindex="0"
+                                                animated=""
+                                                elevation="0"
+                                                aria-disabled="false"
+                                                aria-label="댓글 정렬">
+                                                <!--css-build:shady-->
+
+                                                <yt-icon id="label-icon" class="style-scope yt-dropdown-menu">
+                                                    <svg
+                                                        viewBox="0 0 24 24"
+                                                        preserveAspectRatio="xMidYMid meet"
+                                                        focusable="false"
+                                                        class="style-scope yt-icon"
+                                                        style="pointer-events: none; display: block; width: 100%; height: 100%;">
+                                                        <g class="style-scope yt-icon">
+                                                            <path
+                                                                d="M21,6H3V5h18V6z M15,11H3v1h12V11z M9,17H3v1h6V17z"
+                                                                class="style-scope yt-icon"></path>
+                                                        </g>
+                                                    </svg>
+                                                    <!--css-build:shady-->
+                                                </yt-icon>
+                                                <div id="icon-label" class="style-scope yt-dropdown-menu">정렬 기준</div>
+                                                <dom-if class="style-scope yt-dropdown-menu">
+                                                    <template is="dom-if"></template>
+                                                </dom-if>
+                                                <dom-if class="style-scope yt-dropdown-menu">
+                                                    <template is="dom-if"></template>
+                                                </dom-if>
+                                            </tp-yt-paper-button>
+                                        </div>
+
+                                        <tp-yt-iron-dropdown
+                                            id="dropdown"
+                                            class="style-scope tp-yt-paper-menu-button"
+                                            horizontal-align="left"
+                                            vertical-align="top"
+                                            aria-disabled="false"
+                                            aria-hidden="true"
+                                            style="outline: none; display: none;">
+                                            <!--css-build:shady-->
+                                            <div id="contentWrapper" class="style-scope tp-yt-iron-dropdown">
+                                                <div
+                                                    slot="dropdown-content"
+                                                    class="dropdown-content style-scope tp-yt-paper-menu-button">
+                                                    <tp-yt-paper-listbox
+                                                        id="menu"
+                                                        class="dropdown-content style-scope yt-dropdown-menu"
+                                                        slot="dropdown-content"
+                                                        role="listbox"
+                                                        tabindex="0">
+                                                        <!--css-build:shady-->
+
+                                                        <a
+                                                            class="yt-simple-endpoint style-scope yt-dropdown-menu iron-selected"
+                                                            aria-selected="true"
+                                                            tabindex="0">
+                                                            <tp-yt-paper-item
+                                                                class="style-scope yt-dropdown-menu"
+                                                                role="option"
+                                                                tabindex="0"
+                                                                aria-disabled="false">
+                                                                <!--css-build:shady-->
+                                                                <tp-yt-paper-item-body class="style-scope yt-dropdown-menu">
+                                                                    <!--css-build:shady-->
+                                                                    <div class="item style-scope yt-dropdown-menu">인기 댓글순</div>
+                                                                    <div secondary="" id="subtitle" class="style-scope yt-dropdown-menu" hidden=""></div>
+
+                                                                </tp-yt-paper-item-body>
+                                                                <yt-reload-continuation class="style-scope yt-dropdown-menu"></yt-reload-continuation>
+
+                                                            </tp-yt-paper-item>
+                                                        </a>
+
+                                                        <a
+                                                            class="yt-simple-endpoint style-scope yt-dropdown-menu"
+                                                            tabindex="-1"
+                                                            aria-selected="false">
+                                                            <tp-yt-paper-item
+                                                                class="style-scope yt-dropdown-menu"
+                                                                role="option"
+                                                                tabindex="0"
+                                                                aria-disabled="false">
+                                                                <!--css-build:shady-->
+                                                                <tp-yt-paper-item-body class="style-scope yt-dropdown-menu">
+                                                                    <!--css-build:shady-->
+                                                                    <div class="item style-scope yt-dropdown-menu">최근 날짜순</div>
+                                                                    <div secondary="" id="subtitle" class="style-scope yt-dropdown-menu" hidden=""></div>
+
+                                                                </tp-yt-paper-item-body>
+                                                                <yt-reload-continuation class="style-scope yt-dropdown-menu"></yt-reload-continuation>
+
+                                                            </tp-yt-paper-item>
+                                                        </a>
+                                                        <dom-repeat id="repeat" class="style-scope yt-dropdown-menu">
+                                                            <template is="dom-repeat"></template>
+                                                        </dom-repeat>
+
+                                                    </tp-yt-paper-listbox>
+                                                </div>
+                                            </div>
+                                        </tp-yt-iron-dropdown>
+                                    </tp-yt-paper-menu-button>
+                                </yt-dropdown-menu>
+                            </yt-sort-filter-sub-menu-renderer>
+                        </span>
+                    </div>
+                    <div
+                        id="red-commenting-div"
+                        class="style-scope ytd-comments-header-renderer"
+                        hidden="">
+                        <yt-formatted-string
+                            id="red-commenting-text"
+                            class="style-scope ytd-comments-header-renderer">
+                            <!--css-build:shady-->
+                        </yt-formatted-string>
+                    </div>
+                    <div id="alert" class="style-scope ytd-comments-header-renderer"></div>
+                    <div
+                        id="prefilled-dialog-header"
+                        class="style-scope ytd-comments-header-renderer"></div>
+                    <div id="simple-box" class="style-scope ytd-comments-header-renderer">
+                        <ytd-comment-simplebox-renderer
+                            class="style-scope ytd-comments-header-renderer">
+                            <!--css-build:shady-->
+                            <yt-img-shadow
+                                id="author-thumbnail"
+                                height="40"
+                                width="40"
+                                class="style-scope ytd-comment-simplebox-renderer no-transition"
+                                style="background-color: transparent;"
+                                loaded="">
+                                <!--css-build:shady-->
+                                <img
+                                    id="img"
+                                    class="style-scope yt-img-shadow"
+                                    alt="이섭섭"
+                                    height="40"
+                                    width="40"
+                                    src="https://yt3.ggpht.com/yti/APfAmoErw2Et1bOnYQOKuvHX3J_2JgVviPNx9n_zJA=s88-c-k-c0x00ffffff-no-rj"/></yt-img-shadow>
+                            <div id="placeholder-area" class="style-scope ytd-comment-simplebox-renderer">
+                                <yt-formatted-string
+                                    id="simplebox-placeholder"
+                                    role="textbox"
+                                    tabindex="0"
+                                    class="style-scope ytd-comment-simplebox-renderer">공개 댓글 추가…</yt-formatted-string>
+                            </div>
+                            <div id="attachments" class="style-scope ytd-comment-simplebox-renderer">
+                                <div id="image-button" class="style-scope ytd-comment-simplebox-renderer"></div>
+                            </div>
+                            <div
+                                id="comment-dialog"
+                                class="style-scope ytd-comment-simplebox-renderer"
+                                hidden=""></div>
+                        </ytd-comment-simplebox-renderer>
+                    </div>
+                    <div
+                        id="backstage-post-dialog"
+                        class="style-scope ytd-comments-header-renderer"></div>
+                    <div id="post-stream-filter" class="style-scope ytd-comments-header-renderer"></div>
+                    <div id="zero-state-message" class="style-scope ytd-comments-header-renderer"></div>
+                    <div
+                        id="scheduling-zero-state-message"
+                        class="style-scope ytd-comments-header-renderer"></div>
+                </ytd-comments-header-renderer>
+            </div>
+
+            <div id="contents" class="style-scope ytd-item-section-renderer">
+                <ytd-continuation-item-renderer class="style-scope ytd-item-section-renderer">
+                    <!--css-build:shady-->
+                    <div id="ghost-cards" class="style-scope ytd-continuation-item-renderer"></div>
+                    <tp-yt-paper-spinner
+                        id="spinner"
+                        class="style-scope ytd-continuation-item-renderer"
+                        aria-hidden="true">
+                        <!--css-build:shady-->
+                        <div id="spinnerContainer" class="  style-scope tp-yt-paper-spinner">
+                            <div class="spinner-layer layer-1 style-scope tp-yt-paper-spinner">
+                                <div class="circle-clipper left style-scope tp-yt-paper-spinner">
+                                    <div class="circle style-scope tp-yt-paper-spinner"></div>
+                                </div>
+                                <div class="circle-clipper right style-scope tp-yt-paper-spinner">
+                                    <div class="circle style-scope tp-yt-paper-spinner"></div>
+                                </div>
+                            </div>
+                            <div class="spinner-layer layer-2 style-scope tp-yt-paper-spinner">
+                                <div class="circle-clipper left style-scope tp-yt-paper-spinner">
+                                    <div class="circle style-scope tp-yt-paper-spinner"></div>
+                                </div>
+                                <div class="circle-clipper right style-scope tp-yt-paper-spinner">
+                                    <div class="circle style-scope tp-yt-paper-spinner"></div>
+                                </div>
+                            </div>
+                            <div class="spinner-layer layer-3 style-scope tp-yt-paper-spinner">
+                                <div class="circle-clipper left style-scope tp-yt-paper-spinner">
+                                    <div class="circle style-scope tp-yt-paper-spinner"></div>
+                                </div>
+                                <div class="circle-clipper right style-scope tp-yt-paper-spinner">
+                                    <div class="circle style-scope tp-yt-paper-spinner"></div>
+                                </div>
+                            </div>
+                            <div class="spinner-layer layer-4 style-scope tp-yt-paper-spinner">
+                                <div class="circle-clipper left style-scope tp-yt-paper-spinner">
+                                    <div class="circle style-scope tp-yt-paper-spinner"></div>
+                                </div>
+                                <div class="circle-clipper right style-scope tp-yt-paper-spinner">
+                                    <div class="circle style-scope tp-yt-paper-spinner"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </tp-yt-paper-spinner>
+                    <div id="button" class="style-scope ytd-continuation-item-renderer" hidden=""></div>
+                </ytd-continuation-item-renderer>
+            </div>
+
+        </ytd-item-section-renderer>
+    </ytd-comments>
+</template>

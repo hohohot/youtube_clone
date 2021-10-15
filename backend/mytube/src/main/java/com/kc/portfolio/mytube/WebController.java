@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class WebController {
 
-    @GetMapping("/hello")
+    @GetMapping("/*")
     public String mainPage(){
         System.out.println("hello");
         return "index";

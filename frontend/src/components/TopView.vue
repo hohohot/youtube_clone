@@ -205,120 +205,121 @@
                                         aria-autocomplete="list"
                                         dir="ltr"
                                         class="gsfi ytd-searchbox"
-                                        style="border: none; padding: 0px; margin: 0px; height: auto; width: 100%; outline: none; font-size: 15px;"></div>
-                                    <div id="search-clear-button" hidden="hidden" class="style-scope ytd-searchbox">
-                                        <ytd-button-renderer
-                                            use-keyboard-focused=""
-                                            button-renderer="true"
-                                            is-icon-button=""
-                                            has-no-text=""
-                                            class="style-scope ytd-searchbox style-default size-default">
-                                            <a tabindex="-1" class="yt-simple-endpoint style-scope ytd-button-renderer">
-                                                <yt-icon-button
-                                                    id="button"
-                                                    touch-feedback=""
-                                                    class="style-scope ytd-button-renderer style-default size-default">
-                                                    <button id="button" aria-label="검색어 삭제" class="style-scope yt-icon-button">
-                                                        <yt-icon class="style-scope ytd-button-renderer">
-                                                            <svg
-                                                                viewBox="0 0 24 24"
-                                                                preserveAspectRatio="xMidYMid meet"
-                                                                focusable="false"
-                                                                class="style-scope yt-icon"
-                                                                style="pointer-events: none; display: block; width: 100%; height: 100%;">
-                                                                <g class="style-scope yt-icon">
-                                                                    <path
-                                                                        d="M12.7,12l6.6,6.6l-0.7,0.7L12,12.7l-6.6,6.6l-0.7-0.7l6.6-6.6L4.6,5.4l0.7-0.7l6.6,6.6l6.6-6.6l0.7,0.7L12.7,12z"
-                                                                        class="style-scope yt-icon"></path>
-                                                                </g>
-                                                            </svg>
-                                                        </yt-icon>
-                                                    </button>
-                                                    <yt-interaction id="interaction" class="circular style-scope yt-icon-button">
-                                                        <div class="stroke style-scope yt-interaction"></div>
-                                                        <div class="fill style-scope yt-interaction"></div>
-                                                    </yt-interaction>
-                                                </yt-icon-button>
-                                            </a>
-                                        </ytd-button-renderer>
-                                    </div>
+                                        style="border: none; padding: 0px; margin: 0px; height: auto; width: 100%; outline: none; font-size: 15px;"/></div>
+                                <div id="search-clear-button" hidden="hidden" class="style-scope ytd-searchbox">
+                                    <ytd-button-renderer
+                                        use-keyboard-focused=""
+                                        button-renderer="true"
+                                        is-icon-button=""
+                                        has-no-text=""
+                                        class="style-scope ytd-searchbox style-default size-default">
+                                        <a tabindex="-1" class="yt-simple-endpoint style-scope ytd-button-renderer">
+                                            <yt-icon-button
+                                                id="button"
+                                                touch-feedback=""
+                                                class="style-scope ytd-button-renderer style-default size-default">
+                                                <button id="button" aria-label="검색어 삭제" class="style-scope yt-icon-button">
+                                                    <yt-icon class="style-scope ytd-button-renderer">
+                                                        <svg
+                                                            viewBox="0 0 24 24"
+                                                            preserveAspectRatio="xMidYMid meet"
+                                                            focusable="false"
+                                                            class="style-scope yt-icon"
+                                                            style="pointer-events: none; display: block; width: 100%; height: 100%;">
+                                                            <g class="style-scope yt-icon">
+                                                                <path
+                                                                    d="M12.7,12l6.6,6.6l-0.7,0.7L12,12.7l-6.6,6.6l-0.7-0.7l6.6-6.6L4.6,5.4l0.7-0.7l6.6,6.6l6.6-6.6l0.7,0.7L12.7,12z"
+                                                                    class="style-scope yt-icon"></path>
+                                                            </g>
+                                                        </svg>
+                                                    </yt-icon>
+                                                </button>
+                                                <yt-interaction id="interaction" class="circular style-scope yt-icon-button">
+                                                    <div class="stroke style-scope yt-interaction"></div>
+                                                    <div class="fill style-scope yt-interaction"></div>
+                                                </yt-interaction>
+                                            </yt-icon-button>
+                                        </a>
+                                    </ytd-button-renderer>
                                 </div>
-                                <div slot="search-container" id="search-container" class="ytd-searchbox-spt"></div>
-                            </form>
-                            <button
-                                id="search-icon-legacy"
-                                aria-label="검색"
+                            </div>
+                            <div slot="search-container" id="search-container" class="ytd-searchbox-spt"></div>
+                        </form>
+                        <button
+                            id="search-icon-legacy"
+                            aria-label="검색"
+                            class="style-scope ytd-searchbox">
+                            <yt-icon class="style-scope ytd-searchbox">
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    preserveAspectRatio="xMidYMid meet"
+                                    focusable="false"
+                                    class="style-scope yt-icon"
+                                    style="pointer-events: none; display: block; width: 100%; height: 100%;">
+                                    <g class="style-scope yt-icon">
+                                        <path
+                                            d="M20.87,20.17l-5.59-5.59C16.35,13.35,17,11.75,17,10c0-3.87-3.13-7-7-7s-7,3.13-7,7s3.13,7,7,7c1.75,0,3.35-0.65,4.58-1.71 l5.59,5.59L20.87,20.17z M10,16c-3.31,0-6-2.69-6-6s2.69-6,6-6s6,2.69,6,6S13.31,16,10,16z"
+                                            class="style-scope yt-icon"></path>
+                                    </g>
+                                </svg>
+                            </yt-icon>
+                            <tp-yt-paper-tooltip
+                                prefix=""
+                                role="tooltip"
+                                tabindex="-1"
                                 class="style-scope ytd-searchbox">
-                                <yt-icon class="style-scope ytd-searchbox">
-                                    <svg
-                                        viewBox="0 0 24 24"
-                                        preserveAspectRatio="xMidYMid meet"
-                                        focusable="false"
-                                        class="style-scope yt-icon"
-                                        style="pointer-events: none; display: block; width: 100%; height: 100%;">
-                                        <g class="style-scope yt-icon">
-                                            <path
-                                                d="M20.87,20.17l-5.59-5.59C16.35,13.35,17,11.75,17,10c0-3.87-3.13-7-7-7s-7,3.13-7,7s3.13,7,7,7c1.75,0,3.35-0.65,4.58-1.71 l5.59,5.59L20.87,20.17z M10,16c-3.31,0-6-2.69-6-6s2.69-6,6-6s6,2.69,6,6S13.31,16,10,16z"
-                                                class="style-scope yt-icon"></path>
-                                        </g>
-                                    </svg>
-                                </yt-icon>
-                                <tp-yt-paper-tooltip
-                                    prefix=""
-                                    role="tooltip"
-                                    tabindex="-1"
-                                    class="style-scope ytd-searchbox">
-                                    <div id="tooltip" class="hidden style-scope tp-yt-paper-tooltip">
-                                        검색
-                                    </div>
-                                </tp-yt-paper-tooltip>
-                            </button>
-                        </ytd-searchbox>
-                        <yt-icon-button
-                            id="search-button-narrow"
-                            touch-feedback=""
-                            class="style-scope ytd-masthead">
-                            <button id="button" aria-label="검색" class="style-scope yt-icon-button">
-                                <yt-icon
-                                    icon="yt-icons:search"
-                                    disable-upgrade=""
-                                    class="topbar-icons style-scope ytd-masthead"></yt-icon>
-                                <tp-yt-paper-tooltip
-                                    for="search-button-narrow"
-                                    disable-upgrade=""
-                                    hidden=""
-                                    class="style-scope ytd-masthead">
+                                <div id="tooltip" class="hidden style-scope tp-yt-paper-tooltip">
                                     검색
-                                </tp-yt-paper-tooltip>
-                            </button>
-                            <yt-interaction id="interaction" class="circular style-scope yt-icon-button">
-                                <div class="stroke style-scope yt-interaction"></div>
-                                <div class="fill style-scope yt-interaction"></div>
-                            </yt-interaction>
-                        </yt-icon-button>
+                                </div>
+                            </tp-yt-paper-tooltip>
+                        </button>
+                    </ytd-searchbox>
+                    <yt-icon-button
+                        id="search-button-narrow"
+                        touch-feedback=""
+                        class="style-scope ytd-masthead">
+                        <button id="button" aria-label="검색" class="style-scope yt-icon-button">
+                            <yt-icon
+                                icon="yt-icons:search"
+                                disable-upgrade=""
+                                class="topbar-icons style-scope ytd-masthead"></yt-icon>
+                            <tp-yt-paper-tooltip
+                                for="search-button-narrow"
+                                disable-upgrade=""
+                                hidden=""
+                                class="style-scope ytd-masthead">
+                                검색
+                            </tp-yt-paper-tooltip>
+                        </button>
+                        <yt-interaction id="interaction" class="circular style-scope yt-icon-button">
+                            <div class="stroke style-scope yt-interaction"></div>
+                            <div class="fill style-scope yt-interaction"></div>
+                        </yt-interaction>
+                    </yt-icon-button>
+                </div>
+                <div id="end" class="style-scope ytd-masthead">
+                    <div slot="masthead-skeleton" id="masthead-skeleton-icons">
+                        <div class="masthead-skeleton-icon"></div>
+                        <div class="masthead-skeleton-icon"></div>
+                        <div class="masthead-skeleton-icon"></div>
+                        <div class="masthead-skeleton-icon"></div>
                     </div>
-                    <div id="end" class="style-scope ytd-masthead">
-                        <div slot="masthead-skeleton" id="masthead-skeleton-icons">
-                            <div class="masthead-skeleton-icon"></div>
-                            <div class="masthead-skeleton-icon"></div>
-                            <div class="masthead-skeleton-icon"></div>
-                            <div class="masthead-skeleton-icon"></div>
-                        </div>
-                        <div id="buttons" class="style-scope ytd-masthead">
-                            <ytd-topbar-menu-button-renderer
-                                use-keyboard-focused=""
-                                is-icon-button=""
-                                has-no-text=""
-                                class="style-scope ytd-masthead style-default">
-                                <dom-if class="style-scope ytd-topbar-menu-button-renderer"></dom-if>
-                            </ytd-topbar-menu-button-renderer>
-                            <ytd-topbar-menu-button-renderer
-                                use-keyboard-focused=""
-                                is-icon-button=""
-                                has-no-text=""
-                                class="style-scope ytd-masthead style-default">
-                                <dom-if class="style-scope ytd-topbar-menu-button-renderer"></dom-if>
-                            </ytd-topbar-menu-button-renderer>
+                    <div id="buttons" class="style-scope ytd-masthead">
+                        <ytd-topbar-menu-button-renderer
+                            use-keyboard-focused=""
+                            is-icon-button=""
+                            has-no-text=""
+                            class="style-scope ytd-masthead style-default">
+                            <dom-if class="style-scope ytd-topbar-menu-button-renderer"></dom-if>
+                        </ytd-topbar-menu-button-renderer>
+                        <ytd-topbar-menu-button-renderer
+                            use-keyboard-focused=""
+                            is-icon-button=""
+                            has-no-text=""
+                            class="style-scope ytd-masthead style-default">
+                            <dom-if class="style-scope ytd-topbar-menu-button-renderer"></dom-if>
+                        </ytd-topbar-menu-button-renderer>
+                        <div v-if="userInfo===null">
                             <ytd-button-renderer
                                 use-keyboard-focused=""
                                 button-renderer="true"
@@ -327,7 +328,7 @@
                                 class="style-scope ytd-masthead style-suggestive size-small">
                                 <a
                                     tabindex="-1"
-                                    href="https://accounts.google.com/ServiceLogin?service=youtube&amp;uilel=3&amp;passive=true&amp;continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Dko%26next%3Dhttps%253A%252F%252Fwww.youtube.com%252F&amp;hl=ko&amp;ec=65620"
+                                    href="/oauth2/authorization/google"
                                     class="yt-simple-endpoint style-scope ytd-button-renderer">
                                     <tp-yt-paper-button
                                         id="button"
@@ -363,8 +364,105 @@
                                 </a>
                             </ytd-button-renderer>
                         </div>
+                        <ytd-topbar-menu-button-renderer
+                            v-if="userInfo!==null"
+                            class="style-scope ytd-masthead style-default"
+                            use-keyboard-focused=""
+                            is-icon-button=""
+                            has-no-text="">
+                            <!--css-build:shady-->
+                            <dom-if class="style-scope ytd-topbar-menu-button-renderer">
+                                <template is="dom-if"></template>
+                            </dom-if>
+                            <div id="button" class="style-scope ytd-topbar-menu-button-renderer">
+                                <a
+                                    class="yt-simple-endpoint style-scope ytd-topbar-menu-button-renderer"
+                                    tabindex="-1">
+                                    <yt-icon-button
+                                        id="button"
+                                        class="style-scope ytd-topbar-menu-button-renderer style-default"
+                                        touch-feedback="">
+                                        <!--css-build:shady-->
+                                        <button @click="seeModal" id="button" class="style-scope yt-icon-button" aria-label="만들기">
+                                            <yt-icon class="style-scope ytd-topbar-menu-button-renderer">
+                                                <svg
+                                                    viewBox="0 0 24 24"
+                                                    preserveAspectRatio="xMidYMid meet"
+                                                    focusable="false"
+                                                    class="style-scope yt-icon"
+                                                    style="pointer-events: none; display: block; width: 100%; height: 100%;">
+                                                    <g class="style-scope yt-icon">
+                                                        <path
+                                                            d="M14,13h-3v3H9v-3H6v-2h3V8h2v3h3V13z M17,6H3v12h14v-6.39l4,1.83V8.56l-4,1.83V6 M18,5v3.83L22,7v8l-4-1.83V19H2V5H18L18,5 z"
+                                                            class="style-scope yt-icon"></path>
+                                                    </g>
+                                                </svg>
+                                                <!--css-build:shady-->
+                                            </yt-icon>
+                                        </button>
+                                        <yt-interaction id="interaction" class="circular style-scope yt-icon-button">
+                                            <!--css-build:shady-->
+                                            <div class="stroke style-scope yt-interaction"></div>
+                                            <div class="fill style-scope yt-interaction"></div>
+                                        </yt-interaction>
+                                    </yt-icon-button>
+                                </a>
+                            </div>
+                        </ytd-topbar-menu-button-renderer>
+
+                        <ytd-topbar-menu-button-renderer
+                            v-if="userInfo!==null"
+                            class="style-scope ytd-masthead"
+                            use-keyboard-focused="">
+                            <!--css-build:shady-->
+                            <button
+                                id="avatar-btn"
+                                aria-haspopup="true"
+                                class="style-scope ytd-topbar-menu-button-renderer"
+                                aria-label="대체 계정 목록을 여는 계정 프로필 사진">
+                                <yt-img-shadow
+                                    height="32"
+                                    width="32"
+                                    class="style-scope ytd-topbar-menu-button-renderer no-transition"
+                                    loaded=""
+                                    style="background-color: transparent;">
+                                    <!--css-build:shady-->
+                                    <img
+                                        id="img"
+                                        class="style-scope yt-img-shadow"
+                                        alt="아바타 이미지"
+                                        height="32"
+                                        width="32"
+                                        v-bind:src="profile"/></yt-img-shadow>
+                            </button>
+                            <dom-if class="style-scope ytd-topbar-menu-button-renderer">
+                                <template is="dom-if"></template>
+                            </dom-if>
+                            <div id="button" class="style-scope ytd-topbar-menu-button-renderer"></div>
+                        </ytd-topbar-menu-button-renderer>
                     </div>
                 </div>
-            </ytd-masthead>
-        </div>
-    </template>
+            </div>
+        </ytd-masthead>
+    </div>
+</template>
+
+<script>
+    import axios from 'axios'
+    export default {
+        created() {
+            axios
+                .get('/userInfo')
+                .then(response => {
+                    this.userInfo = response;
+                    this.profile = response.data.profileUrl;
+                    console.log(this.userInfo);
+                });
+        },
+        data() {
+            return {userInfo: null, profile: null};
+        },
+        props: ['seeModal'],
+        
+    }
+</script>

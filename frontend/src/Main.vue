@@ -3,21 +3,24 @@
 </style>
 
 
-<template system-icons = "">
+<template system-icons="">
     <div>
+        <ModalView v-if="seeModal" @close-modal="seeModal = false" position="absolute">
+            <Content msg="Hello Vue in CodeSandbox!"/>
+        </ModalView>
         <ytd-app
             scrollbar-rework=""
             standardized-themed-scrollbar=""
             scrollbar-color=""
             guide-persistent-and-visible="">
             <!--css-build:shady-->
-
             <yt-history-manager id="historyManager" class="style-scope ytd-app"></yt-history-manager>
-            <div id="content" class="style-scope ytd-app">
-                <TopView></TopView>
-                <SideDrawer></SideDrawer>
+            <div id="content" class="style-scope ytd-app" position=relative>
+                <TopView v-bind:seeModal="uploadButtonClick"></TopView>
+                
+                <SideDrawer z-index=99 posision=absolute></SideDrawer>
 
-                <ytd-page-manager id="page-manager" class="style-scope ytd-app">
+                <ytd-page-manager d="page-manager" class="style-scope ytd-app">
                     <!--css-build:shady-->
                     <ytd-browse
                         class="style-scope ytd-page-manager"
@@ -184,6 +187,7 @@
                     </ytd-browse>
                 </ytd-page-manager>
             </div>
+            
 
         </ytd-app>
     </div>
@@ -194,13 +198,29 @@
     import TopView from "./components/TopView";
     import SideDrawer from "./components/SideDrawer";
     import VideoItem from "./components/VideoItem";
+    import ModalView from "./components/ModalView.vue"
+    import Content from "./components/UploadModal.vue"
 
     export default {
-        name: "App",
+        name: "Main",
         components: {
             'TopView':TopView,
             'SideDrawer':SideDrawer,
-            'VideoItem':VideoItem
+            'VideoItem':VideoItem,
+            'Content':Content,
+            'ModalView': ModalView,
         },
+        data(){
+            return{
+            seeModal: false,
+            }
+        },
+        methods:{
+            uploadButtonClick(){
+                console.log(this.seeModal);
+                this.seeModal = true;
+                console.log(this.seeModal);
+            },
+        }
     }
 </script>

@@ -200,7 +200,17 @@
                                     id="simplebox-placeholder"
                                     role="textbox"
                                     tabindex="0"
-                                    class="style-scope ytd-comment-simplebox-renderer">공개 댓글 추가…</yt-formatted-string>
+                                    class="style-scope ytd-comment-simplebox-renderer">
+                                    <div
+                                        id="contenteditable-root"
+                                        contenteditable="true"
+                                        dir="auto"
+                                        class="style-scope yt-formatted-string"
+                                        aria-label="공개 댓글 추가…"
+                                        ref="commentContents"
+                                        >
+                                    </div>
+                                </yt-formatted-string>
                             </div>
                             <div id="attachments" class="style-scope ytd-comment-simplebox-renderer">
                                 <div id="image-button" class="style-scope ytd-comment-simplebox-renderer"></div>
@@ -209,8 +219,42 @@
                                 id="comment-dialog"
                                 class="style-scope ytd-comment-simplebox-renderer"
                                 hidden=""></div>
+
                         </ytd-comment-simplebox-renderer>
+                        <div id="footer" class="style-scope ytd-commentbox">
+                            <div id="buttons" class="style-scope ytd-commentbox">
+                                
+                                <ytd-button-renderer
+                                    id="submit-button"
+                                    class="style-scope ytd-commentbox style-primary size-default"
+                                    use-keyboard-focused=""
+                                    button-renderer="true"
+                                    is-paper-button=""
+                                    @click="postComment"
+                                    >
+                                    <a class="yt-simple-endpoint style-scope ytd-button-renderer" tabindex="-1">
+                                        <tp-yt-paper-button
+                                            id="button"
+                                            class="style-scope ytd-button-renderer style-primary size-default"
+                                            role="button"
+                                            tabindex="-1"
+                                            animated=""
+                                            elevation="0"
+                                            aria-disabled="true"
+                                            aria-label="댓글"
+                                            style="pointer-events: none;">
+                                            <!--css-build:shady-->
+                                            <yt-formatted-string
+                                                id="text"
+                                                class="style-scope ytd-button-renderer style-primary size-default">댓글</yt-formatted-string>
+                                        </tp-yt-paper-button>
+                                    </a>
+                                </ytd-button-renderer>
+                                <div id="option-menu" class="style-scope ytd-commentbox"></div>
+                            </div>
+                        </div>
                     </div>
+
                     <div
                         id="backstage-post-dialog"
                         class="style-scope ytd-comments-header-renderer"></div>
@@ -223,6 +267,7 @@
             </div>
 
             <div id="contents" class="style-scope ytd-item-section-renderer">
+                <CommentsRootItem/>
                 <ytd-continuation-item-renderer class="style-scope ytd-item-section-renderer">
                     <!--css-build:shady-->
                     <div id="ghost-cards" class="style-scope ytd-continuation-item-renderer"></div>
@@ -273,3 +318,39 @@
         </ytd-item-section-renderer>
     </ytd-comments>
 </template>
+
+<script>
+import axios from "axios"
+import 'url-search-params-polyfill'
+import CommentsRootItem from './CommentsRootIem.vue'
+
+export default{
+    components:{
+        CommentsRootItem
+    },
+    data(){
+        return {
+            commentInput: "",
+            commentsList: [],
+        }
+    },
+    methods:{
+        postComment(){
+            var textToSend = this.$refs.commentContents.innerText;
+            var videoId = this.$route.query.id;
+            console.log(this.$refs.commentContents.innerText);
+            var params = new URLSearchParams();
+            params.append('commentContent', textToSend);
+            params.append('videoId', parseInt(videoId));
+            axios.post("/comments/postcomments", params).
+            then(this.updateComments()
+
+            );
+            this.$refs.commentContents.innerText = "";
+        },
+        updateComments(){
+        }
+    }
+}
+
+</script>

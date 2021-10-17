@@ -15,7 +15,7 @@ import javax.servlet.http.HttpSession;
 public class WebController {
     private final HttpSession httpSession;
 
-    @GetMapping("/")
+    @GetMapping("/*")
     public String mainPage(Model model, HttpSession httpSession){
         System.out.println("hello");
         if(httpSession.getAttribute("userName")!=null)

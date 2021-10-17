@@ -168,15 +168,7 @@
                                     <div id="masthead-ad" class="style-scope ytd-rich-grid-renderer"></div>
 
                                     <div id="contents" class="style-scope ytd-rich-grid-renderer">
-                                        <VideoItem></VideoItem>
-                                        <VideoItem></VideoItem>
-                                        <VideoItem></VideoItem>
-                                        <VideoItem></VideoItem>
-                                        <VideoItem></VideoItem>
-                                        <VideoItem></VideoItem>
-                                        <VideoItem></VideoItem>
-                                        <VideoItem></VideoItem>
-
+                                        <VideoItem v-for="(item, index) in videoItemList" :key="index" :infos="item"/>
                                     </div>
 
                                 </ytd-rich-grid-renderer>
@@ -195,32 +187,81 @@
 </template>
 
 <script>
-    import TopView from "./components/TopView";
-    import SideDrawer from "./components/SideDrawer";
-    import VideoItem from "./components/VideoItem";
-    import ModalView from "./components/ModalView.vue"
-    import Content from "./components/UploadModal.vue"
+import TopView from "./components/TopView";
+import SideDrawer from "./components/SideDrawer";
+import VideoItem from "./components/VideoItem";
+import ModalView from "./components/ModalView.vue"
+import Content from "./components/UploadModal.vue"
+import axios from "axios"
 
-    export default {
-        name: "Main",
-        components: {
-            'TopView':TopView,
-            'SideDrawer':SideDrawer,
-            'VideoItem':VideoItem,
-            'Content':Content,
-            'ModalView': ModalView,
+export default {
+    name: "Main",
+    components: {
+        'TopView': TopView,
+        'SideDrawer': SideDrawer,
+        'VideoItem': VideoItem,
+        'Content': Content,
+        'ModalView': ModalView
+    },
+    data() {
+        return {seeModal: false, videoItemList: []}
+    },
+    methods: {
+        uploadButtonClick() {
+            console.log(this.seeModal);
+            this.seeModal = true;
+            console.log(this.seeModal);
         },
-        data(){
-            return{
-            seeModal: false,
+        numToView(num) {
+            var ret;
+            if (num < 1000) {
+                ret = num + "회";
+            } else if (num < 10000) {
+                ret = (num / 1000).toFixed(1) + "천회";
+            } else {
+                ret = (num / 10000).toFixed(1) + "만회";
             }
+            return ret;
         },
-        methods:{
-            uploadButtonClick(){
-                console.log(this.seeModal);
-                this.seeModal = true;
-                console.log(this.seeModal);
-            },
+        strToDate(strs) {
+            var ret = Date.parse(strs);
+            console.log(ret);
+            console.log(new Date().getTime());
+            var gap = new Date().getTime() - ret;
+            gap = gap / 1000;
+            if (gap < 60) {
+                ret = gap.toFixed(0) + "초";
+            } else if (gap < 3600) {
+                ret = (gap / 60).toFixed(0) + "분";
+            } else if (gap < 3600 * 24) {
+                ret = (gap / 3600).toFixed(0) + "시간";
+            } else if (gap < 3600 * 24 * 7) {
+                ret = (gap / 3600 / 24).toFixed(0) + "일";
+            } else if (gap < 3600 * 24 * 30) {
+                ret = (gap / 3600 / 24 / 7 ).toFixed(0)+ "주";
+            } else if (gap < 3600 * 24 * 365) {
+                ret = (gap / 3600 / 24 / 30).toFixed(0) + "개월";
+            } else {
+                ret = (gap / 3600 / 24 / 365).toFixed(0) + "년";
+            }
+            return ret;
         }
+    },
+    created() {
+        axios
+            .get("/recommending_videos/0/9")
+            .then(response => {
+                for (var i = 0; i < response.data.length; i++) {
+                    console.log(response.data);
+                    response.data[i].view = this.numToView(response.data[i].view);
+                    response.data[i].createdTime = this.strToDate(response.data[i].createdTime);
+                    response.data[i].videoLength = String((response.data[i].videoLength/60).toFixed(0)).padStart(2, "0") 
+                    + ":"+ String(response.data[i].videoLength%60).padStart(2, "0");
+                    console.log(response.data);
+                }
+                this.videoItemList = this.videoItemList.concat(response.data);
+                console.log(this.videoItemList);
+            });
     }
+}
 </script>

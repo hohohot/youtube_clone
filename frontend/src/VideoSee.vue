@@ -31,8 +31,8 @@
                         <div id="primary" class="style-scope ytd-watch-flexy">
                             <div id="primary-inner" class="style-scope ytd-watch-flexy">
                                 <VideoPlayer></VideoPlayer>
-                                <VideoInfos></VideoInfos>
-                                <VideoMetas></VideoMetas>
+                                <VideoInfos :videoInfoDatas="videoInfoDatas"></VideoInfos>
+                                <VideoMetas :videoMetaDatas="videoMetaDatas"></VideoMetas>
 
                                 <div id="ticket-shelf" class="style-scope ytd-watch-flexy"></div>
                                 <VideoComments></VideoComments>
@@ -142,6 +142,7 @@
     import VideoInfos from "./components/VideoInfoss.vue";
     import VideoMetas from "./components/VideoMetas.vue";
     import VideoPlayer from "./components/VideoPlayer.vue";
+    import axios from "axios";
 
 
     export default {
@@ -152,6 +153,44 @@
             VideoInfos,
             VideoMetas,
             VideoPlayer,
+        },
+        data(){
+            return {
+                videoInfoDatas: {title: "title",
+                    likes: 0,
+                    views: 0,
+                    isLiked: false,
+                    createdDate: "asdas",},
+                videoMetaDatas: {
+                    userInfoDto:{
+                        profile : "",
+                        userName : "",
+                        email : "",
+                    },
+                    isSubs: false,
+                    description : "",
+                },
+            }
+        },
+        created(){
+            console.log(this.videoInfoDatas);
+            axios.get("/videoinfos/" + this.$route.query.id)
+            .then(response=>{
+                this.videoInfoDatas = {
+                    title: response.data.title,
+                    likes: response.data.likes,
+                    views: response.data.views,
+                    isLiked: response.data.isLiked,
+                    createdDate: String(response.data.createdDate).substring(0,10),
+                };
+                console.log(this.videoInfoDatas);
+                this.videoMetaDatas = {
+                    userInfoDto: response.data.userInfoDto,
+                    description: response.data.description,
+                    isSubs: response.data.isSubs,
+                };
+                console.log(this.videoMetaDatas);
+            });
         }
     }
 </script>

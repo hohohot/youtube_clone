@@ -59,7 +59,7 @@
                     <h1 class="title style-scope ytd-video-primary-info-renderer">
                         <yt-formatted-string
                             force-default-style=""
-                            class="style-scope ytd-video-primary-info-renderer">한시간만에 끝내는 Node.js 입문</yt-formatted-string>
+                            class="style-scope ytd-video-primary-info-renderer">{{videoInfoDatas.title}}</yt-formatted-string>
                     </h1>
                     <ytd-badge-supported-renderer
                         class="style-scope ytd-video-primary-info-renderer"
@@ -72,13 +72,13 @@
                                     class="style-scope ytd-video-primary-info-renderer"
                                     small="">
                                     <!--css-build:shady-->
-                                    <span class="view-count style-scope ytd-video-view-count-renderer">조회수 39,975회</span>
+                                    <span class="view-count style-scope ytd-video-view-count-renderer">조회수 {{videoInfoDatas.views}}회</span>
                                     <span class="short-view-count style-scope ytd-video-view-count-renderer">조회수 3.9만회</span>
                                 </ytd-video-view-count-renderer>
                             </div>
                             <div id="info-strings" class="style-scope ytd-video-primary-info-renderer">
                                 <span id="dot" class="style-scope ytd-video-primary-info-renderer"></span>
-                                <yt-formatted-string class="style-scope ytd-video-primary-info-renderer">2020. 8. 6.</yt-formatted-string>
+                                <yt-formatted-string class="style-scope ytd-video-primary-info-renderer">{{videoInfoDatas.createdDate}}</yt-formatted-string>
                                 <dom-repeat class="style-scope ytd-video-primary-info-renderer">
                                     <template is="dom-repeat"></template>
                                 </dom-repeat>
@@ -137,7 +137,7 @@
                                                 <yt-formatted-string
                                                     id="text"
                                                     class="style-scope ytd-toggle-button-renderer style-text"
-                                                    aria-label="좋아요 826개">826</yt-formatted-string>
+                                                    aria-label="좋아요">{{videoInfoDatas.likes}}</yt-formatted-string>
                                                 <tp-yt-paper-tooltip
                                                     class="style-scope ytd-toggle-button-renderer"
                                                     role="tooltip"
@@ -150,163 +150,9 @@
                                                 </tp-yt-paper-tooltip>
                                             </a>
                                         </ytd-toggle-button-renderer>
-                                        <ytd-toggle-button-renderer
-                                            class="style-scope ytd-menu-renderer force-icon-button style-text"
-                                            use-keyboard-focused=""
-                                            system-icons=""
-                                            button-renderer="true"
-                                            style-action-button=""
-                                            is-icon-button="">
-                                            <a
-                                                class="yt-simple-endpoint style-scope ytd-toggle-button-renderer"
-                                                tabindex="-1">
-                                                <yt-icon-button
-                                                    id="button"
-                                                    class="style-scope ytd-toggle-button-renderer style-text"
-                                                    touch-feedback="">
-                                                    <!--css-build:shady-->
-                                                    <button
-                                                        id="button"
-                                                        class="style-scope yt-icon-button"
-                                                        aria-label="나 외에 사용자 16명이 이 동영상을 싫어함"
-                                                        aria-pressed="false">
-                                                        <yt-icon class="style-scope ytd-toggle-button-renderer">
-                                                            <svg
-                                                                viewBox="0 0 24 24"
-                                                                preserveAspectRatio="xMidYMid meet"
-                                                                focusable="false"
-                                                                class="style-scope yt-icon"
-                                                                style="pointer-events: none; display: block; width: 100%; height: 100%;">
-                                                                <g class="style-scope yt-icon">
-                                                                    <path
-                                                                        d="M17,4h-1H6.57C5.5,4,4.59,4.67,4.38,5.61l-1.34,6C2.77,12.85,3.82,14,5.23,14h4.23l-1.52,4.94C7.62,19.97,8.46,21,9.62,21 c0.58,0,1.14-0.24,1.52-0.65L17,14h4V4H17z M10.4,19.67C10.21,19.88,9.92,20,9.62,20c-0.26,0-0.5-0.11-0.63-0.3 c-0.07-0.1-0.15-0.26-0.09-0.47l1.52-4.94l0.4-1.29H9.46H5.23c-0.41,0-0.8-0.17-1.03-0.46c-0.12-0.15-0.25-0.4-0.18-0.72l1.34-6 C5.46,5.35,5.97,5,6.57,5H16v8.61L10.4,19.67z M20,13h-3V5h3V13z"
-                                                                        class="style-scope yt-icon"></path>
-                                                                </g>
-                                                            </svg>
-                                                            <!--css-build:shady-->
-                                                        </yt-icon>
-                                                    </button>
-                                                    <yt-interaction id="interaction" class="circular style-scope yt-icon-button">
-                                                        <!--css-build:shady-->
-                                                        <div class="stroke style-scope yt-interaction"></div>
-                                                        <div class="fill style-scope yt-interaction"></div>
-                                                    </yt-interaction>
-                                                </yt-icon-button>
-                                                <yt-formatted-string
-                                                    id="text"
-                                                    class="style-scope ytd-toggle-button-renderer style-text"
-                                                    aria-label="싫어요 16개">16</yt-formatted-string>
-                                            </a>
-                                        </ytd-toggle-button-renderer>
-                                        <ytd-button-renderer
-                                            class="style-scope ytd-menu-renderer force-icon-button style-default size-default"
-                                            use-keyboard-focused=""
-                                            button-renderer="true"
-                                            style-action-button=""
-                                            is-icon-button="">
-                                            <a class="yt-simple-endpoint style-scope ytd-button-renderer" tabindex="-1">
-                                                <yt-icon-button
-                                                    id="button"
-                                                    class="style-scope ytd-button-renderer style-default size-default"
-                                                    touch-feedback="">
-                                                    <!--css-build:shady-->
-                                                    <button id="button" class="style-scope yt-icon-button" aria-label="공유">
-                                                        <yt-icon class="style-scope ytd-button-renderer">
-                                                            <svg
-                                                                viewBox="0 0 24 24"
-                                                                preserveAspectRatio="xMidYMid meet"
-                                                                focusable="false"
-                                                                class="style-scope yt-icon"
-                                                                style="pointer-events: none; display: block; width: 100%; height: 100%;">
-                                                                <g mirror-in-rtl="" class="style-scope yt-icon">
-                                                                    <path
-                                                                        d="M15,5.63L20.66,12L15,18.37V15v-1h-1c-3.96,0-7.14,1-9.75,3.09c1.84-4.07,5.11-6.4,9.89-7.1L15,9.86V9V5.63 M14,3v6 C6.22,10.13,3.11,15.33,2,21c2.78-3.97,6.44-6,12-6v6l8-9L14,3L14,3z"
-                                                                        class="style-scope yt-icon"></path>
-                                                                </g>
-                                                            </svg>
-                                                            <!--css-build:shady-->
-                                                        </yt-icon>
-                                                    </button>
-                                                    <yt-interaction id="interaction" class="circular style-scope yt-icon-button">
-                                                        <!--css-build:shady-->
-                                                        <div class="stroke style-scope yt-interaction"></div>
-                                                        <div class="fill style-scope yt-interaction"></div>
-                                                    </yt-interaction>
-                                                </yt-icon-button>
-                                                <yt-formatted-string
-                                                    id="text"
-                                                    class="style-scope ytd-button-renderer style-default size-default">공유</yt-formatted-string>
-                                            </a>
-                                        </ytd-button-renderer>
-                                        <ytd-button-renderer
-                                            class="style-scope ytd-menu-renderer force-icon-button style-default size-default"
-                                            use-keyboard-focused=""
-                                            button-renderer="true"
-                                            style-action-button=""
-                                            is-icon-button="">
-                                            <a class="yt-simple-endpoint style-scope ytd-button-renderer" tabindex="-1">
-                                                <yt-icon-button
-                                                    id="button"
-                                                    class="style-scope ytd-button-renderer style-default size-default"
-                                                    touch-feedback="">
-                                                    <!--css-build:shady-->
-                                                    <button id="button" class="style-scope yt-icon-button" aria-label="재생목록에 저장">
-                                                        <yt-icon class="style-scope ytd-button-renderer">
-                                                            <svg
-                                                                viewBox="0 0 24 24"
-                                                                preserveAspectRatio="xMidYMid meet"
-                                                                focusable="false"
-                                                                class="style-scope yt-icon"
-                                                                style="pointer-events: none; display: block; width: 100%; height: 100%;">
-                                                                <g class="style-scope yt-icon">
-                                                                    <path
-                                                                        d="M22,13h-4v4h-2v-4h-4v-2h4V7h2v4h4V13z M14,7H2v1h12V7z M2,12h8v-1H2V12z M2,16h8v-1H2V16z"
-                                                                        class="style-scope yt-icon"></path>
-                                                                </g>
-                                                            </svg>
-                                                            <!--css-build:shady-->
-                                                        </yt-icon>
-                                                    </button>
-                                                    <yt-interaction id="interaction" class="circular style-scope yt-icon-button">
-                                                        <!--css-build:shady-->
-                                                        <div class="stroke style-scope yt-interaction"></div>
-                                                        <div class="fill style-scope yt-interaction"></div>
-                                                    </yt-interaction>
-                                                </yt-icon-button>
-                                                <yt-formatted-string
-                                                    id="text"
-                                                    class="style-scope ytd-button-renderer style-default size-default">저장</yt-formatted-string>
-                                            </a>
-                                        </ytd-button-renderer>
+                                        
                                     </div>
-                                    <yt-icon-button
-                                        id="button"
-                                        class="dropdown-trigger style-scope ytd-menu-renderer"
-                                        touch-feedback="">
-                                        <!--css-build:shady-->
-                                        <button id="button" class="style-scope yt-icon-button" aria-label="추가 작업">
-                                            <yt-icon class="style-scope ytd-menu-renderer">
-                                                <svg
-                                                    viewBox="0 0 24 24"
-                                                    preserveAspectRatio="xMidYMid meet"
-                                                    focusable="false"
-                                                    class="style-scope yt-icon"
-                                                    style="pointer-events: none; display: block; width: 100%; height: 100%;">
-                                                    <g class="style-scope yt-icon">
-                                                        <path
-                                                            d="M12,16.5c0.83,0,1.5,0.67,1.5,1.5s-0.67,1.5-1.5,1.5s-1.5-0.67-1.5-1.5S11.17,16.5,12,16.5z M10.5,12 c0,0.83,0.67,1.5,1.5,1.5s1.5-0.67,1.5-1.5s-0.67-1.5-1.5-1.5S10.5,11.17,10.5,12z M10.5,6c0,0.83,0.67,1.5,1.5,1.5 s1.5-0.67,1.5-1.5S12.83,4.5,12,4.5S10.5,5.17,10.5,6z"
-                                                            class="style-scope yt-icon"></path>
-                                                    </g>
-                                                </svg>
-                                                <!--css-build:shady-->
-                                            </yt-icon>
-                                        </button>
-                                        <yt-interaction id="interaction" class="circular style-scope yt-icon-button">
-                                            <!--css-build:shady-->
-                                            <div class="stroke style-scope yt-interaction"></div>
-                                            <div class="fill style-scope yt-interaction"></div>
-                                        </yt-interaction>
-                                    </yt-icon-button>
+                                    
                                 </ytd-menu-renderer>
                             </div>
                             <ytd-sentiment-bar-renderer
@@ -339,3 +185,10 @@
         </div>
     </div>
 </template>
+
+<script>
+export default{
+    props:['videoInfoDatas'],
+
+};
+</script>

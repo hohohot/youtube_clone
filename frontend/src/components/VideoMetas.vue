@@ -40,7 +40,7 @@
                                         class="style-scope yt-img-shadow"
                                         alt=""
                                         width="48"
-                                        src="https://yt3.ggpht.com/ytc/AKedOLQbvHkqFlwxRkrNI6M_jHxLdsoD3RUy4hLxZB8z=s88-c-k-c0x00ffffff-no-rj"/></yt-img-shadow>
+                                        :src="videoMetaDatas.userInfoDto.profile"/></yt-img-shadow>
                             </a>
                             <div id="upload-info" class="style-scope ytd-video-owner-renderer">
                                 <ytd-channel-name
@@ -58,7 +58,7 @@
                                                     class="yt-simple-endpoint style-scope yt-formatted-string"
                                                     spellcheck="false"
                                                     href="/channel/UCeyUnRL6sG_GQJRus89sZ8Q"
-                                                    dir="auto">개발자의품격</a>
+                                                    dir="auto">{{videoMetaDatas.userInfoDto.userName}}</a>
                                             </yt-formatted-string>
                                         </div>
                                         <tp-yt-paper-tooltip
@@ -180,12 +180,7 @@
                                 <yt-formatted-string
                                     class="content style-scope ytd-video-secondary-info-renderer"
                                     force-default-style=""
-                                    split-lines="">[개발자의
-                                    품격] 품격있는 개발자 되기! 이번 강좌는 한시간만에 끝내는 Node.js 입문이라는 주제로 진행이 됩니다. 실제로는 40분 정도 소요가
-                                    됩니다. 원래 한시간 정도 필요할것이라고 생각했는데, 막상 진행해 보니, 40분 정도가 소요되었네요. 이 강좌에서 Node.js 전체를
-                                    알려드리지 않아요. Node.js가 무엇이고, 왜 좋은지, 어떻게 모듈을 사용해서 빠르게 여러분이 원하는 어플리케이션을 구축하는게 가능한지..
-                                    그게 Node.js 이기 때문에 가능하다는 것을 보여드리려고 합니다. 실제 실무에서 가장 많이 사용되는 Node.js 핵심 패키지 모듈에
-                                    대해서는 별도로 하나하나 강좌를 만들어서 제공할 예정입니다. 이번 강좌는 잘 이해되지 않는 부분이 있더라도 일단은 끝까지 보시면 좋을것 같아요.</yt-formatted-string>
+                                    split-lines="">{{videoMetaDatas.description}}</yt-formatted-string>
                             </div>
                         </div>
                         <ytd-metadata-row-container-renderer
@@ -238,3 +233,11 @@
         </div>
     </div>
 </template>
+
+
+<script>
+
+export default({
+    props:['videoMetaDatas'],
+})
+</script>

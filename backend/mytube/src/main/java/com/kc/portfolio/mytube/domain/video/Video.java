@@ -77,4 +77,9 @@ public class Video extends BaseTimeEntity {
         }
     }
 
+    public void upView(){
+        this.views++;
+    }
+
+
 }

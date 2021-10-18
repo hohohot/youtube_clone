@@ -40,7 +40,7 @@
                                         class="style-scope yt-img-shadow"
                                         alt=""
                                         width="48"
-                                        :src="videoMetaDatas.userInfoDto.profile"/></yt-img-shadow>
+                                        :src="videoMetaDatas.userInfoDto.profileUrl"/></yt-img-shadow>
                             </a>
                             <div id="upload-info" class="style-scope ytd-video-owner-renderer">
                                 <ytd-channel-name

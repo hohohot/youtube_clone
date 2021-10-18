@@ -3,11 +3,14 @@ package com.kc.portfolio.mytube.service;
 
 import com.kc.portfolio.mytube.MytubeApplication;
 import com.kc.portfolio.mytube.config.auth.dto.SessionUser;
+import com.kc.portfolio.mytube.domain.like.LikeVideo;
+import com.kc.portfolio.mytube.domain.like.LikeVideoRepository;
 import com.kc.portfolio.mytube.domain.user.UserRepository;
 import com.kc.portfolio.mytube.domain.video.Video;
 import com.kc.portfolio.mytube.domain.video.VideoRepository;
 import com.kc.portfolio.mytube.domain.video.VideoUrl;
 import com.kc.portfolio.mytube.domain.video.VideoUrlRepository;
+import com.kc.portfolio.mytube.web.dto.LikeResponseDto;
 import com.kc.portfolio.mytube.web.dto.VideoInfoListItemDto;
 import com.kc.portfolio.mytube.web.dto.VideoInfosDto;
 import com.kc.portfolio.mytube.web.dto.VideoUploadRequestDto;
@@ -26,9 +29,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +44,8 @@ public class VideoService {
     private final VideoUrlRepository videoUrlRepository;
     private final UserRepository userRepository;
     private static final long CHUNK_SIZE = 1024*1024L;
+    private final HttpSession httpSession;
+    private final LikeVideoRepository likeVideoRepository;
 
 
     @Transactional(readOnly = true)
@@ -118,6 +125,14 @@ public class VideoService {
 
     public VideoInfosDto getVideoInfos(Long videoId, SessionUser user){
         Video video = videoRepository.findById(videoId).get();
+        HashSet<Long> haveSeen = (HashSet<Long>)httpSession.getAttribute("haveSeen");
+        if(haveSeen==null)
+            haveSeen = new HashSet<>();
+        if(!haveSeen.contains(videoId)){
+            haveSeen.add(videoId);
+            video.upView();
+            httpSession.setAttribute("haveSeen", haveSeen);
+        }
         return VideoInfosDto.builder()
                 .createdDate(video.getCreatedDate())
                 .isLiked(false)

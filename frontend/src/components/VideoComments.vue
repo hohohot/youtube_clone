@@ -19,7 +19,7 @@
                                 class="count-text style-scope ytd-comments-header-renderer">
                                 <span dir="auto" class="style-scope yt-formatted-string">댓글
                                 </span>
-                                <span dir="auto" class="style-scope yt-formatted-string">89</span>
+                                <span dir="auto" class="style-scope yt-formatted-string">{{commentNum}}</span>
                                 <span dir="auto" class="style-scope yt-formatted-string">개</span>
                             </yt-formatted-string>
                         </h2>
@@ -267,7 +267,7 @@
             </div>
 
             <div id="contents" class="style-scope ytd-item-section-renderer">
-                <CommentsRootItem/>
+                <CommentsRootItem v-for="(item, index) in commentsList" :key="index" :commentInfo="item" :userInfo="userInfo"/>
                 <ytd-continuation-item-renderer class="style-scope ytd-item-section-renderer">
                     <!--css-build:shady-->
                     <div id="ghost-cards" class="style-scope ytd-continuation-item-renderer"></div>
@@ -297,7 +297,7 @@
                                 <div class="circle-clipper left style-scope tp-yt-paper-spinner">
                                     <div class="circle style-scope tp-yt-paper-spinner"></div>
                                 </div>
-                                <div class="circle-clipper right style-scope tp-yt-paper-spinner">
+                                <div class="circle-clipper right style-scope tp-yt-paper-spinner" >
                                     <div class="circle style-scope tp-yt-paper-spinner"></div>
                                 </div>
                             </div>
@@ -328,13 +328,52 @@ export default{
     components:{
         CommentsRootItem
     },
+    created(){
+        this.updateComments();
+        this.updateCommentsNums();
+    },
     data(){
         return {
             commentInput: "",
-            commentsList: [],
+            commentNum: 0,
+            userInfo :{
+                userName: "Lee ki chan",
+                profileUrl: "https://yt3.ggpht.com/yti/APfAmoErw2Et1bOnYQOKuvHX3J_2JgVviPNx9n_zJA=s88-c-k-c0x00ffffff-no-rj",
+                email: "asdf1234@anve.rom"
+            },
+
+            commentsList: [
+                {
+                    userInfoDto: {
+                        userName: "Lee ki chan",
+                        profileUrl: "https://yt3.ggpht.com/ytc/AKedOLTyfjkMHkTuj5PicJsHqbdBu1g8YIVpkCIhLw=s88-c-k-c0x00ffffff-no-rj"
+                    },
+                    commentId: 1,
+                    likes: 64,
+                    content: "와ㅇㄴㄹdd 나중에 영상많이 모으시면, 진짜 '코딩 상식 사전' 하나 출판 하셔도 좋을 것 같아요!!\n 초보로서 책 찾아보면 이런 상식들 이해하기 쉽게 적힌것도 많이 없고, 보통 책들이 특정 범주만 깊게 다루고 있어서 아쉬운게 많았거든요 ㅠㅠ",
+                    createdDate: "2 년 전"
+                }
+                
+            ],
         }
     },
     methods:{
+        updateComments(){
+            axios.get("/comments/getcomments/" + this.$route.query.id)
+            .then(response => {
+                console.log(response);
+                for(var i = 0; i < response.data.length; i++){
+                    response.data[i].createdDate = this.strToDate(response.data[i].createdDate);
+                }
+                this.commentsList = response.data;
+            });
+        },
+        updateCommentsNums(){
+            axios.get("/comments/howmany/" + this.$route.query.id)
+            .then(response => {
+                this.commentNum = response.data;
+            });
+        },
         postComment(){
             var textToSend = this.$refs.commentContents.innerText;
             var videoId = this.$route.query.id;
@@ -343,12 +382,32 @@ export default{
             params.append('commentContent', textToSend);
             params.append('videoId', parseInt(videoId));
             axios.post("/comments/postcomments", params).
-            then(this.updateComments()
-
+            then(()=>{this.updateComments();}
             );
             this.$refs.commentContents.innerText = "";
         },
-        updateComments(){
+        strToDate(strs) {
+            var ret = Date.parse(strs);
+            console.log(ret);
+            console.log(new Date().getTime());
+            var gap = new Date().getTime() - ret;
+            gap = gap / 1000;
+            if (gap < 60) {
+                ret = gap.toFixed(0) + "초";
+            } else if (gap < 3600) {
+                ret = (gap / 60).toFixed(0) + "분";
+            } else if (gap < 3600 * 24) {
+                ret = (gap / 3600).toFixed(0) + "시간";
+            } else if (gap < 3600 * 24 * 7) {
+                ret = (gap / 3600 / 24).toFixed(0) + "일";
+            } else if (gap < 3600 * 24 * 30) {
+                ret = (gap / 3600 / 24 / 7 ).toFixed(0)+ "주";
+            } else if (gap < 3600 * 24 * 365) {
+                ret = (gap / 3600 / 24 / 30).toFixed(0) + "개월";
+            } else {
+                ret = (gap / 3600 / 24 / 365).toFixed(0) + "년";
+            }
+            return ret;
         }
     }
 }

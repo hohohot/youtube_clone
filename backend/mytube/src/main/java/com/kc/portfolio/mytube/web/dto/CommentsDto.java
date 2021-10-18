@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class CommentsDto {
+    Long commentId;
     UserInfoDto userInfoDto;
     Long likes;
     Boolean isLiked;
@@ -19,12 +20,13 @@ public class CommentsDto {
     LocalDateTime createdDate;
 
     @Builder
-    public CommentsDto(UserInfoDto userInfoDto, Long likes, Boolean isLiked, String content, LocalDateTime createdDate) {
+
+    public CommentsDto(Long commentId, UserInfoDto userInfoDto, Long likes, Boolean isLiked, String content, LocalDateTime createdDate) {
+        this.commentId = commentId;
         this.userInfoDto = userInfoDto;
         this.likes = likes;
         this.isLiked = isLiked;
         this.content = content;
         this.createdDate = createdDate;
     }
-
 }

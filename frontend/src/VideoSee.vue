@@ -51,6 +51,7 @@
                                         is-two-columns="">
                                         <!--css-build:shady-->
                                         <div id="items" class="style-scope ytd-watch-next-secondary-results-renderer">
+                                            <RelatedVideoItem v-for="(item,index) in videoItemList" :key="index" :infos="item"/>
                                             <ytd-continuation-item-renderer
                                                 class="style-scope ytd-watch-next-secondary-results-renderer">
                                                 <!--css-build:shady-->
@@ -142,8 +143,8 @@
     import VideoInfos from "./components/VideoInfoss.vue";
     import VideoMetas from "./components/VideoMetas.vue";
     import VideoPlayer from "./components/VideoPlayer.vue";
+    import RelatedVideoItem from "./components/RelatedVideoItem.vue"
     import axios from "axios";
-
 
     export default {
         name: "App",
@@ -153,44 +154,116 @@
             VideoInfos,
             VideoMetas,
             VideoPlayer,
+            RelatedVideoItem
         },
-        data(){
+        data() {
             return {
-                videoInfoDatas: {title: "title",
+                videoInfoDatas: {
+                    title: "title",
                     likes: 0,
                     views: 0,
-                    isLiked: false,
-                    createdDate: "asdas",},
+                    isLiked: true,
+                    createdDate: "asdas"
+                },
                 videoMetaDatas: {
-                    userInfoDto:{
-                        profile : "",
-                        userName : "",
-                        email : "",
+                    userInfoDto: {
+                        profile: "",
+                        userName: "",
+                        email: ""
                     },
                     isSubs: false,
-                    description : "",
+                    description: ""
                 },
+                videoItemList: [
+                ]
             }
         },
-        created(){
+        created() {
             console.log(this.videoInfoDatas);
-            axios.get("/videoinfos/" + this.$route.query.id)
-            .then(response=>{
-                this.videoInfoDatas = {
-                    title: response.data.title,
-                    likes: response.data.likes,
-                    views: response.data.views,
-                    isLiked: response.data.isLiked,
-                    createdDate: String(response.data.createdDate).substring(0,10),
-                };
-                console.log(this.videoInfoDatas);
-                this.videoMetaDatas = {
-                    userInfoDto: response.data.userInfoDto,
-                    description: response.data.description,
-                    isSubs: response.data.isSubs,
-                };
-                console.log(this.videoMetaDatas);
-            });
+            axios
+                .get("/videoinfos/" + this.$route.query.id)
+                .then(response => {
+                    this.videoInfoDatas = {
+                        title: response.data.title,
+                        likes: response.data.likes,
+                        views: response.data.views,
+                        isLiked: response.data.isLiked,
+                        createdDate: String(response.data.createdDate).substring(0, 10)
+                    };
+                    console.log(this.videoInfoDatas);
+                    this.videoMetaDatas = {
+                        userInfoDto: response.data.userInfoDto,
+                        description: response.data.description,
+                        isSubs: response.data.isSubs
+                    };
+                    console.log(this.videoMetaDatas);
+                });
+
+            axios
+                .get("/recommending_videos/0/9")
+                .then(response => {
+                    for (var i = 0; i < response.data.length; i++) {
+                        console.log(response.data);
+                        response
+                            .data[i]
+                            .view = this.numToView(response.data[i].view);
+                        response
+                            .data[i]
+                            .createdTime = this.strToDate(response.data[i].createdTime);
+                        response
+                            .data[i]
+                            .videoLength = String((response.data[i].videoLength / 60).toFixed(0)).padStart(
+                                2,
+                                "0"
+                            ) + ":" + String(response.data[i].videoLength % 60).padStart(2, "0");
+                        console.log(response.data);
+                    }
+                    this.videoItemList = this
+                        .videoItemList
+                        .concat(response.data);
+                    console.log(this.videoItemList);
+                });
+        },
+        methods: {
+            uploadButtonClick() {
+                console.log(this.seeModal);
+                this.seeModal = true;
+                console.log(this.seeModal);
+            },
+            numToView(num) {
+                var ret;
+                if (num < 1000) {
+                    ret = num + "회";
+                } else if (num < 10000) {
+                    ret = (num / 1000).toFixed(1) + "천회";
+                } else {
+                    ret = (num / 10000).toFixed(1) + "만회";
+                }
+                return ret;
+            },
+            strToDate(strs) {
+                var ret = Date.parse(strs);
+                console.log(ret);
+                console.log(new Date().getTime());
+                var gap = new Date().getTime() - ret;
+                gap = gap / 1000;
+                if (gap < 60) {
+                    ret = gap.toFixed(0) + "초";
+                } else if (gap < 3600) {
+                    ret = (gap / 60).toFixed(0) + "분";
+                } else if (gap < 3600 * 24) {
+                    ret = (gap / 3600).toFixed(0) + "시간";
+                } else if (gap < 3600 * 24 * 7) {
+                    ret = (gap / 3600 / 24).toFixed(0) + "일";
+                } else if (gap < 3600 * 24 * 30) {
+                    ret = (gap / 3600 / 24 / 7).toFixed(0) + "주";
+                } else if (gap < 3600 * 24 * 365) {
+                    ret = (gap / 3600 / 24 / 30).toFixed(0) + "개월";
+                } else {
+                    ret = (gap / 3600 / 24 / 365).toFixed(0) + "년";
+                }
+                return ret;
+            }
         }
     }
 </script>

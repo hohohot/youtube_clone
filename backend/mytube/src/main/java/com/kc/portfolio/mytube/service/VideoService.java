@@ -3,14 +3,14 @@ package com.kc.portfolio.mytube.service;
 
 import com.kc.portfolio.mytube.MytubeApplication;
 import com.kc.portfolio.mytube.config.auth.dto.SessionUser;
-import com.kc.portfolio.mytube.domain.like.LikeVideo;
-import com.kc.portfolio.mytube.domain.like.LikeVideoRepository;
+import com.kc.portfolio.mytube.domain.like.video.LikeVideo;
+import com.kc.portfolio.mytube.domain.like.video.LikeVideoRepository;
+import com.kc.portfolio.mytube.domain.user.User;
 import com.kc.portfolio.mytube.domain.user.UserRepository;
 import com.kc.portfolio.mytube.domain.video.Video;
 import com.kc.portfolio.mytube.domain.video.VideoRepository;
 import com.kc.portfolio.mytube.domain.video.VideoUrl;
 import com.kc.portfolio.mytube.domain.video.VideoUrlRepository;
-import com.kc.portfolio.mytube.web.dto.LikeResponseDto;
 import com.kc.portfolio.mytube.web.dto.VideoInfoListItemDto;
 import com.kc.portfolio.mytube.web.dto.VideoInfosDto;
 import com.kc.portfolio.mytube.web.dto.VideoUploadRequestDto;
@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.FileUrlResource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.core.io.support.ResourceRegion;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -96,11 +97,15 @@ public class VideoService {
                     new File(videoFilePath));
             thumbnail.transferTo(
                     new File(thumbnailFilePath));
+            video.setThumbnail(thumbnailFilePath);
         } catch (IOException e) {
             e.printStackTrace();
+
         }
-        video.setThumbnail(thumbnailFilePath);
+
         video.setVideoPath(videoFilePath);
+        if(video.getThumbnailUrl() == null)
+            video.extractThumbnail();
         videoUrlRepository.save(
                 VideoUrl.builder()
                 .video(video)
@@ -123,7 +128,7 @@ public class VideoService {
         return null;
     }
 
-    public VideoInfosDto getVideoInfos(Long videoId, SessionUser user){
+    public VideoInfosDto getVideoInfos(Long videoId, SessionUser sessionUser){
         Video video = videoRepository.findById(videoId).get();
         HashSet<Long> haveSeen = (HashSet<Long>)httpSession.getAttribute("haveSeen");
         if(haveSeen==null)
@@ -133,11 +138,14 @@ public class VideoService {
             video.upView();
             httpSession.setAttribute("haveSeen", haveSeen);
         }
+        User user = userRepository.findByEmail(sessionUser.getEmail()).get();
+        boolean isLiked = !likeVideoRepository.findByUserAndVideo(user,video).isEmpty();
+
         return VideoInfosDto.builder()
                 .createdDate(video.getCreatedDate())
-                .isLiked(false)
+                .isLiked(isLiked)
                 .isSubs(false)
-                .likes(0L)
+                .likes(Long.valueOf(video.getLikes()))
                 .title(video.getTitile())
                 .views(video.getViews())
                 .description(video.getDescription())
@@ -145,6 +153,25 @@ public class VideoService {
                 .build();
     }
 
+    @Transactional
+    public Long likeVideo(Long videoId, SessionUser sessionUser, String comamnd){
+        Video video = videoRepository.findById(videoId).get();
+        if(video == null || sessionUser == null)
+            return -1L;
+        User user = userRepository.findByEmail(sessionUser.getEmail()).get();
+        if(comamnd.equals("post")){
+            likeVideoRepository.save(LikeVideo.builder()
+                    .video(video)
+                    .user(user)
+                    .build()
+            );
+        }else{
+            likeVideoRepository.deleteByUserAndVideo(user, video);
+        }
+        Long likes  = likeVideoRepository.countByVideo(video);
+        video.setLikes(likes);
+        return likes;
+    }
 
 
 
@@ -154,6 +181,7 @@ public class VideoService {
 
     public ResponseEntity<ResourceRegion> getVideoRegion(String rangeHeader , Long videoId) throws IOException {
         Video video = videoRepository.findById(videoId).get();
+        System.out.println(video.getVideoPath());
         FileUrlResource videoResource = new FileUrlResource(video.getVideoPath());
         ResourceRegion resourceRegion = getResourceRegion(videoResource, rangeHeader);
 

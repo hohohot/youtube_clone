@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.Session;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -42,17 +43,31 @@ public class CommentController {
 
     @GetMapping("/comments/getcomments/{id}")
     public @ResponseBody List<CommentsDto> getComments(@PathVariable("id") Long videoId){
-        return commentService.getComments(videoId);
+        SessionUser sessionUser = (SessionUser)httpSession.getAttribute("userInfo");
+        return commentService.getComments(videoId, sessionUser);
     }
 
 
     @GetMapping("/comments/getreplys/{id}")
     public @ResponseBody List<ReplysDto> getReplys(@PathVariable("id") Long replyId){
-        return commentService.getReplys(replyId);
+        SessionUser sessionUser = (SessionUser) httpSession.getAttribute("userInfo");
+        return commentService.getReplys(replyId, sessionUser);
     }
 
     @GetMapping("/comments/howmany/{id}")
     public @ResponseBody Long getCommentsNum(@PathVariable("id") Long videoId){
         return commentService.howManyComment(videoId);
+    }
+
+    @PutMapping("like_comment/{command}/{id}")
+    public @ResponseBody Long likeComment(@PathVariable("id") Long commentId, @PathVariable("command") String command){
+        SessionUser user = (SessionUser) httpSession.getAttribute("userInfo");
+        return commentService.likeComemnt(commentId, user, command);
+    }
+
+    @PutMapping("like_reply/{command}/{id}")
+    public @ResponseBody Long likeReply(@PathVariable("id") Long commentId, @PathVariable("command") String command){
+        SessionUser user = (SessionUser) httpSession.getAttribute("userInfo");
+        return commentService.likeReply(commentId, user, command);
     }
 }

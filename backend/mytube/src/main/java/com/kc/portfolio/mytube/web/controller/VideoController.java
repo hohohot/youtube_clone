@@ -63,6 +63,12 @@ public class VideoController {
 
     }
 
+    @PutMapping("like_video/{command}/{id}")
+    public @ResponseBody Long likeVideo(@PathVariable("id") Long videoId, @PathVariable("command") String command){
+        SessionUser user = (SessionUser) httpSession.getAttribute("userInfo");
+        return videoService.likeVideo(videoId, user, command);
+    }
+
     @GetMapping("/videoinfos/{id}")
     public @ResponseBody  VideoInfosDto getVideoInfos(@PathVariable("id") Long videoId){
         SessionUser user = (SessionUser) httpSession.getAttribute("userInfo");

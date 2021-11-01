@@ -13,6 +13,8 @@ public class MytubeApplication {
 
 	public static final String DYNAMIC_RESOURCE = "/dynamicResource";
 	public static final String VIDEO_PATH = DYNAMIC_RESOURCE+"/videos";
+	public static final String FFMPEG = "C:\\ffmpeg\\ffmpeg-2021-10-18-git-d04c005021-essentials_build\\ffmpeg-2021-10-18-git-d04c005021-essentials_build\\bin\\ffmpeg";
+	public static final String FFPROBE = "C:\\ffmpeg\\ffmpeg-2021-10-18-git-d04c005021-essentials_build\\ffmpeg-2021-10-18-git-d04c005021-essentials_build\\bin\\ffprobe";
 
 	public static void initializeFolder(){
 		if (!new File(DYNAMIC_RESOURCE).exists()) {

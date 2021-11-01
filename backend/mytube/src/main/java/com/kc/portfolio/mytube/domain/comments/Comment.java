@@ -30,11 +30,18 @@ public class Comment extends BaseTimeEntity {
     @Column
     private String content;
 
+
+    @Column
+    private Long likes = 0L;
     @Builder
 
     public Comment(User user, Video video, String content) {
         this.user = user;
         this.video = video;
         this.content = content;
+    }
+
+    public void setLikes(Long likes){
+        this. likes = likes;
     }
 }

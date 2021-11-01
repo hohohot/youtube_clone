@@ -72,7 +72,8 @@
                                     class="style-scope ytd-video-primary-info-renderer"
                                     small="">
                                     <!--css-build:shady-->
-                                    <span class="view-count style-scope ytd-video-view-count-renderer">조회수 {{videoInfoDatas.views}}회</span>
+                                    <span class="view-count style-scope ytd-video-view-count-renderer">조회수
+                                        {{videoInfoDatas.views}}회</span>
                                     <span class="short-view-count style-scope ytd-video-view-count-renderer">조회수 3.9만회</span>
                                 </ytd-video-view-count-renderer>
                             </div>
@@ -93,6 +94,7 @@
                                         id="top-level-buttons-computed"
                                         class="top-level-buttons style-scope ytd-menu-renderer">
                                         <ytd-toggle-button-renderer
+                                            @click="clickLike"
                                             class="style-scope ytd-menu-renderer force-icon-button style-text"
                                             use-keyboard-focused=""
                                             system-icons=""
@@ -114,6 +116,7 @@
                                                         aria-pressed="false">
                                                         <yt-icon class="style-scope ytd-toggle-button-renderer">
                                                             <svg
+                                                                v-if="!videoInfoDatas.isLiked"
                                                                 viewBox="0 0 24 24"
                                                                 preserveAspectRatio="xMidYMid meet"
                                                                 focusable="false"
@@ -122,6 +125,19 @@
                                                                 <g class="style-scope yt-icon">
                                                                     <path
                                                                         d="M18.77,11h-4.23l1.52-4.94C16.38,5.03,15.54,4,14.38,4c-0.58,0-1.14,0.24-1.52,0.65L7,11H3v10h4h1h9.43 c1.06,0,1.98-0.67,2.19-1.61l1.34-6C21.23,12.15,20.18,11,18.77,11z M7,20H4v-8h3V20z M19.98,13.17l-1.34,6 C18.54,19.65,18.03,20,17.43,20H8v-8.61l5.6-6.06C13.79,5.12,14.08,5,14.38,5c0.26,0,0.5,0.11,0.63,0.3 c0.07,0.1,0.15,0.26,0.09,0.47l-1.52,4.94L13.18,12h1.35h4.23c0.41,0,0.8,0.17,1.03,0.46C19.92,12.61,20.05,12.86,19.98,13.17z"
+                                                                        class="style-scope yt-icon"></path>
+                                                                </g>
+                                                            </svg>
+                                                            <svg
+                                                                v-if="videoInfoDatas.isLiked"
+                                                                viewBox="0 0 24 24"
+                                                                preserveAspectRatio="xMidYMid meet"
+                                                                focusable="false"
+                                                                class="style-scope yt-icon"
+                                                                style="pointer-events: none; display: block; width: 100%; height: 100%;">
+                                                                <g class="style-scope yt-icon">
+                                                                    <path
+                                                                        d="M3,11h3v10H3V11z M18.77,11h-4.23l1.52-4.94C16.38,5.03,15.54,4,14.38,4c-0.58,0-1.14,0.24-1.52,0.65L7,11v10h10.43 c1.06,0,1.98-0.67,2.19-1.61l1.34-6C21.23,12.15,20.18,11,18.77,11z"
                                                                         class="style-scope yt-icon"></path>
                                                                 </g>
                                                             </svg>
@@ -150,9 +166,9 @@
                                                 </tp-yt-paper-tooltip>
                                             </a>
                                         </ytd-toggle-button-renderer>
-                                        
+
                                     </div>
-                                    
+
                                 </ytd-menu-renderer>
                             </div>
                             <ytd-sentiment-bar-renderer
@@ -187,8 +203,25 @@
 </template>
 
 <script>
-export default{
-    props:['videoInfoDatas'],
-
-};
+    import axios from 'axios';
+    export default {
+        props: ['videoInfoDatas'],
+        methods: {
+            clickLike() {
+                var urlMethod;
+                if (this.videoInfoDatas.isLiked) {
+                    urlMethod = "delete";
+                } else {
+                    urlMethod = "post";
+                }
+                axios
+                    .put(`/like_video/${urlMethod}/${this.$route.query.id}`)
+                    .then(response => {
+                        if(response.data != -1)
+                            this.videoInfoDatas.likes = response.data
+                    });
+                this.videoInfoDatas.isLiked = !this.videoInfoDatas.isLiked;
+            }
+        }
+    };
 </script>

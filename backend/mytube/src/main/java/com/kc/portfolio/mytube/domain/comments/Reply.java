@@ -33,6 +33,9 @@ public class Reply extends BaseTimeEntity {
     @Column
     private String content;
 
+
+    @Column
+    private Long likes = 0L;
     @Builder
 
     public Reply(User user, Video video, Comment comment, String content) {
@@ -40,5 +43,10 @@ public class Reply extends BaseTimeEntity {
         this.video = video;
         this.comment = comment;
         this.content = content;
+    }
+
+
+    public void setLikes(Long likes){
+        this.likes = likes;
     }
 }

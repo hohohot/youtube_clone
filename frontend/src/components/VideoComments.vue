@@ -331,6 +331,12 @@ export default{
     created(){
         this.updateComments();
         this.updateCommentsNums();
+        axios
+                .get('/userInfo')
+                .then(response => {
+                    this.userInfo = response.data;
+                    console.log(this.userInfo);
+                });
     },
     data(){
         return {
@@ -343,16 +349,17 @@ export default{
             },
 
             commentsList: [
-                {
+                /*{
                     userInfoDto: {
                         userName: "Lee ki chan",
                         profileUrl: "https://yt3.ggpht.com/ytc/AKedOLTyfjkMHkTuj5PicJsHqbdBu1g8YIVpkCIhLw=s88-c-k-c0x00ffffff-no-rj"
                     },
                     commentId: 1,
+                    isLiked: false,
                     likes: 64,
                     content: "와ㅇㄴㄹdd 나중에 영상많이 모으시면, 진짜 '코딩 상식 사전' 하나 출판 하셔도 좋을 것 같아요!!\n 초보로서 책 찾아보면 이런 상식들 이해하기 쉽게 적힌것도 많이 없고, 보통 책들이 특정 범주만 깊게 다루고 있어서 아쉬운게 많았거든요 ㅠㅠ",
                     createdDate: "2 년 전"
-                }
+                }*/
                 
             ],
         }

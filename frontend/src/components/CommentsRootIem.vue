@@ -166,6 +166,7 @@
                                 64
                             </span>
                             <ytd-toggle-button-renderer
+                                @click="clickLike"
                                 id="like-button"
                                 icon-size="16"
                                 use-keyboard-focused=""
@@ -188,6 +189,7 @@
                                             class="style-scope yt-icon-button">
                                             <yt-icon class="style-scope ytd-toggle-button-renderer">
                                                 <svg
+                                                    v-if="!commentInfo.isLiked"
                                                     viewBox="0 0 16 16"
                                                     preserveAspectRatio="xMidYMid meet"
                                                     focusable="false"
@@ -196,6 +198,19 @@
                                                     <g class="style-scope yt-icon">
                                                         <path
                                                             d="M12.42,14A1.54,1.54,0,0,0,14,12.87l1-4.24C15.12,7.76,15,7,14,7H10l1.48-3.54A1.17,1.17,0,0,0,10.24,2a1.49,1.49,0,0,0-1.08.46L5,7H1v7ZM9.89,3.14A.48.48,0,0,1,10.24,3a.29.29,0,0,1,.23.09S9,6.61,9,6.61L8.46,8H14c0,.08-1,4.65-1,4.65a.58.58,0,0,1-.58.35H6V7.39ZM2,8H5v5H2Z"
+                                                            class="style-scope yt-icon"></path>
+                                                    </g>
+                                                </svg>
+                                                <svg
+                                                    v-if="commentInfo.isLiked"
+                                                    viewBox="0 0 24 24"
+                                                    preserveAspectRatio="xMidYMid meet"
+                                                    focusable="false"
+                                                    class="style-scope yt-icon"
+                                                    style="pointer-events: none; display: block; width: 100%; height: 100%;">
+                                                    <g class="style-scope yt-icon">
+                                                        <path
+                                                            d="M3,11h3v10H3V11z M18.77,11h-4.23l1.52-4.94C16.38,5.03,15.54,4,14.38,4c-0.58,0-1.14,0.24-1.52,0.65L7,11v10h10.43 c1.06,0,1.98-0.67,2.19-1.61l1.34-6C21.23,12.15,20.18,11,18.77,11z"
                                                             class="style-scope yt-icon"></path>
                                                     </g>
                                                 </svg>
@@ -263,8 +278,7 @@
                             :toggleDialog="toggleDialog"
                             :userInfo="userInfo"
                             :commentId="commentInfo.commentId"
-                            :updateReplys="updateReplys"
-                            />
+                            :updateReplys="updateReplys"/>
                     </ytd-comment-action-buttons-renderer>
                     <div
                         id="moderation-buttons"
@@ -294,7 +308,7 @@
 
                     <div id="expander-contents" class="style-scope ytd-comment-replies-renderer">
                         <div id="contents" class="style-scope ytd-comment-replies-renderer">
-                            <ReplyItem  v-for="(item, index) in replysList" :key="index" :replyInfo="item"/>
+                            <ReplyItem v-for="(item, index) in replysList" :key="index" :replyInfo="item"/>
                         </div>
 
                     </div>
@@ -317,14 +331,14 @@
             ReplyItem,
             ReplyDialog
         },
-        created(){
+        created() {
             this.updateReplys();
         },
         data() {
             return {
                 replyDialgVisible: false,
                 replysList: [
-                    {
+                    /*{
                         userInfoDto: {
                             userName: "Lee ki chan",
                             profileUrl: "https://yt3.ggpht.com/ytc/AKedOLTyfjkMHkTuj5PicJsHqbdBu1g8YIVpkCIhLw=s88-c-k-c" +
@@ -332,39 +346,40 @@
                         },
                         replyId: 1,
                         likes: 64,
+                        isLiked: false,
                         content: "와ㅇㄴㄹdd 나중에 영상많이 모으시면, 진짜 '코딩 상식 사전' 하나 출판 하셔도 좋을 것 같아요!!\n 초보로서 책 찾아보면 이런 상식들 " +
                             "이해하기 쉽게 적힌것도 많이 없고, 보통 책들이 특정 범주만 깊게 다루고 있어서 아쉬운게 많았거든요 ㅠㅠ",
                         createdDate: "2 년 전"
-                    }
+                    }*/
 
                 ]
             }
         },
-        
+
         methods: {
             strToDate(strs) {
-            var ret = Date.parse(strs);
-            console.log(ret);
-            console.log(new Date().getTime());
-            var gap = new Date().getTime() - ret;
-            gap = gap / 1000;
-            if (gap < 60) {
-                ret = gap.toFixed(0) + "초";
-            } else if (gap < 3600) {
-                ret = (gap / 60).toFixed(0) + "분";
-            } else if (gap < 3600 * 24) {
-                ret = (gap / 3600).toFixed(0) + "시간";
-            } else if (gap < 3600 * 24 * 7) {
-                ret = (gap / 3600 / 24).toFixed(0) + "일";
-            } else if (gap < 3600 * 24 * 30) {
-                ret = (gap / 3600 / 24 / 7 ).toFixed(0)+ "주";
-            } else if (gap < 3600 * 24 * 365) {
-                ret = (gap / 3600 / 24 / 30).toFixed(0) + "개월";
-            } else {
-                ret = (gap / 3600 / 24 / 365).toFixed(0) + "년";
-            }
-            return ret;
-        },
+                var ret = Date.parse(strs);
+                console.log(ret);
+                console.log(new Date().getTime());
+                var gap = new Date().getTime() - ret;
+                gap = gap / 1000;
+                if (gap < 60) {
+                    ret = gap.toFixed(0) + "초";
+                } else if (gap < 3600) {
+                    ret = (gap / 60).toFixed(0) + "분";
+                } else if (gap < 3600 * 24) {
+                    ret = (gap / 3600).toFixed(0) + "시간";
+                } else if (gap < 3600 * 24 * 7) {
+                    ret = (gap / 3600 / 24).toFixed(0) + "일";
+                } else if (gap < 3600 * 24 * 30) {
+                    ret = (gap / 3600 / 24 / 7).toFixed(0) + "주";
+                } else if (gap < 3600 * 24 * 365) {
+                    ret = (gap / 3600 / 24 / 30).toFixed(0) + "개월";
+                } else {
+                    ret = (gap / 3600 / 24 / 365).toFixed(0) + "년";
+                }
+                return ret;
+            },
             toggleDialog() {
                 this.replyDialgVisible = !this.replyDialgVisible;
             },
@@ -380,8 +395,22 @@
                         }
                         this.replysList = response.data;
                     });
+            },
+            clickLike() {
+                var urlMethod;
+                if (this.commentInfo.isLiked) {
+                    urlMethod = "delete";
+                } else {
+                    urlMethod = "post";
+                }
+                axios
+                    .put(`/like_comment/${urlMethod}/${this.commentInfo.commentId}`)
+                    .then(response => {
+                        if(response.data != -1)
+                            this.commentInfo.likes = response.data
+                    });
+                this.commentInfo.isLiked = !this.commentInfo.isLiked;
             }
-            
         },
 
         props: ['commentInfo', 'userInfo']

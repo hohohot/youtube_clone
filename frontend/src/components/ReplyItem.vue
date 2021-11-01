@@ -190,6 +190,7 @@
                             0
                         </span>
                         <ytd-toggle-button-renderer
+                            @click="clickLike"
                             id="like-button"
                             icon-size="16"
                             class="style-scope ytd-comment-action-buttons-renderer style-text size-default"
@@ -213,17 +214,31 @@
                                         aria-pressed="false">
                                         <yt-icon class="style-scope ytd-toggle-button-renderer">
                                             <svg
-                                                viewBox="0 0 16 16"
-                                                preserveAspectRatio="xMidYMid meet"
-                                                focusable="false"
-                                                class="style-scope yt-icon"
-                                                style="pointer-events: none; display: block; width: 100%; height: 100%;">
-                                                <g class="style-scope yt-icon">
-                                                    <path
-                                                        d="M12.42,14A1.54,1.54,0,0,0,14,12.87l1-4.24C15.12,7.76,15,7,14,7H10l1.48-3.54A1.17,1.17,0,0,0,10.24,2a1.49,1.49,0,0,0-1.08.46L5,7H1v7ZM9.89,3.14A.48.48,0,0,1,10.24,3a.29.29,0,0,1,.23.09S9,6.61,9,6.61L8.46,8H14c0,.08-1,4.65-1,4.65a.58.58,0,0,1-.58.35H6V7.39ZM2,8H5v5H2Z"
-                                                        class="style-scope yt-icon"></path>
-                                                </g>
-                                            </svg>
+                                                    v-if="!replyInfo.isLiked"
+                                                    viewBox="0 0 16 16"
+                                                    preserveAspectRatio="xMidYMid meet"
+                                                    focusable="false"
+                                                    class="style-scope yt-icon"
+                                                    style="pointer-events: none; display: block; width: 100%; height: 100%;">
+                                                    <g class="style-scope yt-icon">
+                                                        <path
+                                                            d="M12.42,14A1.54,1.54,0,0,0,14,12.87l1-4.24C15.12,7.76,15,7,14,7H10l1.48-3.54A1.17,1.17,0,0,0,10.24,2a1.49,1.49,0,0,0-1.08.46L5,7H1v7ZM9.89,3.14A.48.48,0,0,1,10.24,3a.29.29,0,0,1,.23.09S9,6.61,9,6.61L8.46,8H14c0,.08-1,4.65-1,4.65a.58.58,0,0,1-.58.35H6V7.39ZM2,8H5v5H2Z"
+                                                            class="style-scope yt-icon"></path>
+                                                    </g>
+                                                </svg>
+                                                <svg
+                                                    v-if="replyInfo.isLiked"
+                                                    viewBox="0 0 24 24"
+                                                    preserveAspectRatio="xMidYMid meet"
+                                                    focusable="false"
+                                                    class="style-scope yt-icon"
+                                                    style="pointer-events: none; display: block; width: 100%; height: 100%;">
+                                                    <g class="style-scope yt-icon">
+                                                        <path
+                                                            d="M3,11h3v10H3V11z M18.77,11h-4.23l1.52-4.94C16.38,5.03,15.54,4,14.38,4c-0.58,0-1.14,0.24-1.52,0.65L7,11v10h10.43 c1.06,0,1.98-0.67,2.19-1.61l1.34-6C21.23,12.15,20.18,11,18.77,11z"
+                                                            class="style-scope yt-icon"></path>
+                                                    </g>
+                                                </svg>
                                             <!--css-build:shady-->
                                         </yt-icon>
                                     </button>
@@ -273,7 +288,7 @@
 </template>
 
 <script>
-
+import axios from "axios";
 
 export default{
     data(){
@@ -281,6 +296,22 @@ export default{
         }
     },
     props:['replyInfo'],
-
+    methods:{
+        clickLike() {
+                var urlMethod;
+                if (this.replyInfo.isLiked) {
+                    urlMethod = "delete";
+                } else {
+                    urlMethod = "post";
+                }
+                axios
+                    .put(`/like_reply/${urlMethod}/${this.replyInfo.replyId}`)
+                    .then(response => {
+                        if(response.data != -1)
+                            this.replyInfo.likes = response.data
+                    });
+                this.replyInfo.isLiked = !this.replyInfo.isLiked;
+            }
+    }
 }
 </script>

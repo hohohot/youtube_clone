@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,10 +46,19 @@ public class VideoController {
 
     @GetMapping("/recommending_videos/{page}/{size}")
     public @ResponseBody List<VideoInfoListItemDto> recommemdingVideos(@PathVariable("page") Long page,
-                                                         @PathVariable("size") Long size){
+                                                                       @PathVariable("size") Long size,
+                                                                       @RequestParam(value = "keyword", required = false) String keyword){
+        System.out.println(keyword);
+        SessionUser user = (SessionUser)httpSession.getAttribute("userInfo");
+        return videoService.getRecommendedVideo(user, keyword, page, size);
+    }
+
+    /*@GetMapping("/recommending_videos/{page}/{size}")
+    public @ResponseBody List<VideoInfoListItemDto> recommemdingVideos(@PathVariable("page") Long page,
+                                                                       @PathVariable("size") Long size){
         SessionUser user = (SessionUser)httpSession.getAttribute("userInfo");
         return videoService.getRecommendedVideo(user, page, size);
-    }
+    }*/
 
     @GetMapping(value = "thumbnail/{video_id}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getThumbnail(@PathVariable("video_id") Long videoId){

@@ -10,8 +10,12 @@ import net.bramp.ffmpeg.FFprobe;
 import net.bramp.ffmpeg.probe.FFmpegFormat;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 
+import javax.imageio.ImageIO;
 import javax.persistence.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -30,7 +34,7 @@ public class Video extends BaseTimeEntity {
     private User user;
 
     @Column(nullable = false)
-    private String titile;
+    private String title;
 
     @Column(nullable = false)
     private String description;
@@ -50,9 +54,9 @@ public class Video extends BaseTimeEntity {
     private Long likes = 0L;
 
     @Builder
-    public Video(User user, String titile, String description, Long videoLength, String thumbnailUrl) {
+    public Video(User user, String title, String description, Long videoLength, String thumbnailUrl) {
         this.user = user;
-        this.titile = titile;
+        this.title = title;
         this.description = description;
         this.videoLength = videoLength;
         this.thumbnailUrl = thumbnailUrl;
@@ -104,6 +108,30 @@ public class Video extends BaseTimeEntity {
         catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void postProcesThumbnail() throws IOException {
+        int WIDTH = 720;
+        int HEIGHT = 404;
+        Image image = ImageIO.read(new File(this.thumbnailUrl));
+        int width = image.getWidth(null);
+        int height = image.getHeight(null);
+
+        if (WIDTH * height / width > HEIGHT) {
+            width = HEIGHT * width / height;
+            height = HEIGHT;
+        } else {
+            height = WIDTH * height / width;
+            width = WIDTH;
+        }
+        image = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        BufferedImage bufferedImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+        Graphics g = bufferedImage.getGraphics();
+
+        g.setColor(Color.BLACK);
+        g.drawRect(0, 0, WIDTH, HEIGHT);
+        g.drawImage(image, (WIDTH - width) / 2, (HEIGHT - height) / 2, null);
+        ImageIO.write(bufferedImage, this.thumbnailUrl.substring(this.thumbnailUrl.length() - 3), new File(this.thumbnailUrl));
     }
 
     public void upView(){

@@ -51,7 +51,7 @@
                                         id="text"
                                         class="style-scope ytd-thumbnail-overlay-time-status-renderer"
                                         aria-label="19분 10초">
-                                        
+                                        {{infos.videoLength}}
                                     </span>
                                 </ytd-thumbnail-overlay-time-status-renderer>
                                 <ytd-thumbnail-overlay-now-playing-renderer class="style-scope ytd-thumbnail">

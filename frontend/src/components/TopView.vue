@@ -105,7 +105,10 @@
                                                     class="style-scope yt-icon"></path>
                                             </g>
                                         </g>
-                                        <text x="30" y="17" style="font-family:verdana; font-size:15pt; fill:black; letter-spacing:-3.1pt; font-weight:600;">MyTube</text>
+                                        <text
+                                            x="30"
+                                            y="17"
+                                            style="font-family:verdana; font-size:15pt; fill:black; letter-spacing:-3.1pt; font-weight:600;">MyTube</text>
                                     </svg>
                                 </yt-icon>
                             </div>
@@ -144,10 +147,7 @@
                         system-icons=""
                         role="search"
                         class="style-scope ytd-masthead">
-                        <form
-                            id="search-form"
-                            action="https://www.youtube.com/results"
-                            class="style-scope ytd-searchbox">
+                        <form id="search-form" action="/" class="style-scope ytd-searchbox">
                             <div id="container" class="style-scope ytd-searchbox">
                                 <yt-icon id="search-icon" class="style-scope ytd-searchbox">
                                     <svg
@@ -165,11 +165,14 @@
                                 </yt-icon>
                                 <div slot="search-input" id="search-input" class="ytd-searchbox-spt">
                                     <input
+                                        @blur="blurEvent"
+                                        @focus="focusEvent"
+                                        @input="keywordInput"
                                         id="search"
                                         autocapitalize="none"
                                         autocomplete="off"
                                         autocorrect="off"
-                                        name="search_query"
+                                        name="search"
                                         tabindex="0"
                                         type="text"
                                         spellcheck="false"
@@ -248,7 +251,9 @@
                                 </div>
                             </tp-yt-paper-tooltip>
                         </button>
+                        <RecommendedSearchList v-show="isFocused" :recomdendList="recomdendList"/>
                     </ytd-searchbox>
+
                     <yt-icon-button
                         id="search-button-narrow"
                         touch-feedback=""
@@ -358,7 +363,11 @@
                                         class="style-scope ytd-topbar-menu-button-renderer style-default"
                                         touch-feedback="">
                                         <!--css-build:shady-->
-                                        <button @click="seeModal" id="button" class="style-scope yt-icon-button" aria-label="만들기">
+                                        <button
+                                            @click="seeModal"
+                                            id="button"
+                                            class="style-scope yt-icon-button"
+                                            aria-label="만들기">
                                             <yt-icon class="style-scope ytd-topbar-menu-button-renderer">
                                                 <svg
                                                     viewBox="0 0 24 24"
@@ -419,13 +428,45 @@
                 </div>
             </div>
         </ytd-masthead>
+
     </div>
 </template>
 
 <script>
     import axios from 'axios'
+    import RecommendedSearchList from './RecommendedSearchList.vue'
     export default {
+        components: {
+            'RecommendedSearchList': RecommendedSearchList
+        },
+        methods: {
+            focusEvent() {
+                this.isFocused = true;
+                console.log("focus!!!");
+            },
+            blurEvent() {
+                this.isFocused = false;
+                console.log("blur!!!");
+            },
+            updateKewordList(target) {
+                axios
+                    .get('/recommended_keywords', {
+                        params: {
+                            prefix: target
+                        }
+                    })
+                    .then(response => {
+                        this.recomdendList = response.data;
+                    });
+            },
+            keywordInput(e) {
+                if (e.target.value != undefined) {
+                    this.updateKewordList(e.target.value);
+                }
+            }
+        },
         created() {
+            this.updateKewordList("");
             axios
                 .get('/userInfo')
                 .then(response => {
@@ -433,11 +474,11 @@
                     this.profile = response.data.profileUrl;
                     console.log(this.userInfo);
                 });
+            this.search_keyword = this.$route.query.search;
         },
         data() {
-            return {userInfo: null, profile: null};
+            return {userInfo: null, profile: null, isFocused: false, search_keyword: this.$route.query.search, recomdendList: []};
         },
-        props: ['seeModal'],
-        
+        props: ['seeModal']
     }
 </script>

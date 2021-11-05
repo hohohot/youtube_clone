@@ -1,10 +1,13 @@
 package com.kc.portfolio.mytube;
 
+import com.kc.portfolio.mytube.service.KeywordService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
 
 @EnableJpaAuditing

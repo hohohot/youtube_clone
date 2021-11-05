@@ -34,6 +34,7 @@ import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,22 +49,41 @@ public class VideoService {
     private final HttpSession httpSession;
     private final LikeVideoRepository likeVideoRepository;
 
+    private final KeywordService keywordService;
+
 
     @Transactional(readOnly = true)
-    public List<VideoInfoListItemDto> getRecommendedVideo(SessionUser user, Long page, Long size){
-        PageRequest pageRequest = PageRequest.of(page.intValue(), size.intValue(), Sort.by("createdDate").descending());
-        return videoRepository.findAll(pageRequest).stream()
-                .map(v->VideoInfoListItemDto.builder()
-                        .title(v.getTitile())
-                        .userInfoDto(v.getUser().toSimpleInfoDto())
-                        .thumbnailUrl("/thumbnail/" + v.getId())
-                        .view(v.getViews())
-                        .createdTime(v.getCreatedDate())
-                        .modifiedTime(v.getModifiedDate())
-                        .videoLength(v.getVideoLength())
-                        .videoUrl("/video?id="+v.getId())
-                        .build()
-                ).collect(Collectors.toList());
+    public List<VideoInfoListItemDto> getRecommendedVideo(SessionUser user, String keyword, Long page, Long size){
+        if(keyword== null){
+            PageRequest pageRequest = PageRequest.of(page.intValue(), size.intValue(), Sort.by("createdDate").descending());
+            return videoRepository.findAll(pageRequest).stream()
+                    .map(v -> VideoInfoListItemDto.builder()
+                            .title(v.getTitle())
+                            .userInfoDto(v.getUser().toSimpleInfoDto())
+                            .thumbnailUrl("/thumbnail/" + v.getId())
+                            .view(v.getViews())
+                            .createdTime(v.getCreatedDate())
+                            .modifiedTime(v.getModifiedDate())
+                            .videoLength(v.getVideoLength())
+                            .videoUrl("/video?id=" + v.getId())
+                            .build()
+                    ).collect(Collectors.toList());
+        }else{
+            System.out.println("키워드 검색!");
+            keywordService.insertKeyword(keyword);
+            return videoRepository.searchByKeyword(keyword, Sort.by("createdDate").descending()).stream()
+                    .map(v -> VideoInfoListItemDto.builder()
+                            .title(v.getTitle())
+                            .userInfoDto(v.getUser().toSimpleInfoDto())
+                            .thumbnailUrl("/thumbnail/" + v.getId())
+                            .view(v.getViews())
+                            .createdTime(v.getCreatedDate())
+                            .modifiedTime(v.getModifiedDate())
+                            .videoLength(v.getVideoLength())
+                            .videoUrl("/video?id=" + v.getId())
+                            .build()
+                    ).collect(Collectors.toList());
+        }
     }
 
     @Transactional
@@ -71,7 +91,7 @@ public class VideoService {
                               VideoUploadRequestDto requestDto, SessionUser user){
         String rootPath = System.getProperty("user.dir");
         Video video = videoRepository.save(Video.builder()
-                .titile(requestDto.getTitle())
+                .title(requestDto.getTitle())
                 .description(requestDto.getDescription())
                 .user(userRepository.findByEmail(user.getEmail()).get())
                 .build()
@@ -106,6 +126,11 @@ public class VideoService {
         video.setVideoPath(videoFilePath);
         if(video.getThumbnailUrl() == null)
             video.extractThumbnail();
+        try {
+            video.postProcesThumbnail();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         videoUrlRepository.save(
                 VideoUrl.builder()
                 .video(video)
@@ -146,7 +171,7 @@ public class VideoService {
                 .isLiked(isLiked)
                 .isSubs(false)
                 .likes(Long.valueOf(video.getLikes()))
-                .title(video.getTitile())
+                .title(video.getTitle())
                 .views(video.getViews())
                 .description(video.getDescription())
                 .userInfoDto(video.getUser().toSimpleInfoDto())

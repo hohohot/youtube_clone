@@ -9,48 +9,63 @@ import com.kc.portfolio.mytube.domain.user.User;
 import com.kc.portfolio.mytube.domain.user.UserRepository;
 import com.kc.portfolio.mytube.domain.video.Video;
 import com.kc.portfolio.mytube.domain.video.VideoRepository;
-import com.kc.portfolio.mytube.domain.video.VideoUrl;
-import com.kc.portfolio.mytube.domain.video.VideoUrlRepository;
 import com.kc.portfolio.mytube.web.dto.VideoInfoListItemDto;
 import com.kc.portfolio.mytube.web.dto.VideoInfosDto;
+import com.kc.portfolio.mytube.web.dto.VideoResolutionDto;
 import com.kc.portfolio.mytube.web.dto.VideoUploadRequestDto;
 import com.nimbusds.oauth2.sdk.util.StringUtils;
 import lombok.RequiredArgsConstructor;
+import net.bramp.ffmpeg.FFmpeg;
+import net.bramp.ffmpeg.FFprobe;
+import net.bramp.ffmpeg.builder.FFmpegBuilder;
+import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import org.springframework.core.io.FileUrlResource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.core.io.support.ResourceRegion;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 public class VideoService {
     private final VideoRepository videoRepository;
-    private final VideoUrlRepository videoUrlRepository;
     private final UserRepository userRepository;
-    private static final long CHUNK_SIZE = 1024*1024L;
+    private static final long CHUNK_SIZE = 1024*1024*10L;
     private final HttpSession httpSession;
     private final LikeVideoRepository likeVideoRepository;
+    private final AsyncService asyncService;
 
     private final KeywordService keywordService;
 
+
+    @Transactional(readOnly = true)
+    public List<VideoResolutionDto> getResolutions(Long videoId){
+        Video video = videoRepository.findById(videoId).get();
+        if(video == null) return new ArrayList<>();
+        return video.getVideoUrlMap().entrySet().stream().sorted(Comparator.comparing(p->-p.getKey())).map(p->
+                VideoResolutionDto.builder()
+                        .src(String.format("/streaming/%d/%d",videoId.intValue(), p.getKey().intValue()))
+                        .label(String.format("%dp", p.getKey().intValue()))
+                        .type("video/mp4")
+                        .build()).collect(Collectors.toList());
+    }
 
     @Transactional(readOnly = true)
     public List<VideoInfoListItemDto> getRecommendedVideo(SessionUser user, String keyword, Long page, Long size){
@@ -87,10 +102,10 @@ public class VideoService {
     }
 
     @Transactional
-    public String uploadVideo(MultipartFile videoFile, MultipartFile thumbnail,
-                              VideoUploadRequestDto requestDto, SessionUser user){
+    public Long uploadVideo(MultipartFile videoFile, MultipartFile thumbnail,
+                              VideoUploadRequestDto requestDto, SessionUser user) throws IOException {
         String rootPath = System.getProperty("user.dir");
-        Video video = videoRepository.save(Video.builder()
+        final Video video = videoRepository.save(Video.builder()
                 .title(requestDto.getTitle())
                 .description(requestDto.getDescription())
                 .user(userRepository.findByEmail(user.getEmail()).get())
@@ -123,24 +138,69 @@ public class VideoService {
 
         }
 
-        video.setVideoPath(videoFilePath);
+        FFprobe ffprobe = new FFprobe(MytubeApplication.FFPROBE);  //리눅스에 설치되어 있는 ffmpeg 폴더
+        FFmpegProbeResult probeResult = ffprobe.probe(videoFilePath);
+        Long resolution = Long.valueOf(probeResult.streams.get(0).height);
+
+        video.addVideoUrl(videoFilePath, resolution);
+        video.updateRunningTime(videoFilePath);
         if(video.getThumbnailUrl() == null)
-            video.extractThumbnail();
+            video.extractThumbnail(videoFilePath);
         try {
             video.postProcesThumbnail();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        videoUrlRepository.save(
-                VideoUrl.builder()
-                .video(video)
-                .filepath(videoFilePath)
-                .quality(999L)
-                .build()
-        );
-
-        return "asdf";
+        return video.getId();
     }
+
+    @Async
+    @Transactional
+    public void postProcess(Long videoId) throws IOException {
+        Video video = videoRepository.findById(videoId).get();
+
+        FFmpeg fFmpeg = new FFmpeg(MytubeApplication.FFMPEG);
+
+        Map<Long, String> urlMap = video.getVideoUrlMap();
+        String tempUrl = System.getProperty("user.dir") + MytubeApplication.VIDEO_PATH + "/" + videoId + "/resolution%d.mp4";
+        Long maxResolution = (Long)video.getVideoUrlMap().keySet().toArray()[0];
+        for(int i = 0; i < Video.RESOLUTIONS.length; i++){
+            final int temp = i;
+            if(Video.RESOLUTIONS[i] <= maxResolution){
+                asyncService.run(()-> {
+                    try {
+                        scaleVideos(videoId, Video.RESOLUTIONS[temp], urlMap.get(maxResolution));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+        }
+    }
+
+    @Async
+    @Transactional
+    public void scaleVideos(Long videoId, Long target, String path) throws IOException {
+        Video video = videoRepository.findById(videoId).get();
+        FFmpeg fFmpeg = new FFmpeg(MytubeApplication.FFMPEG);
+        String tempUrl = System.getProperty("user.dir") + MytubeApplication.VIDEO_PATH + "/" + videoId + "/resolution%d.mp4";
+        FFmpegBuilder fFmpegBuilder = new FFmpegBuilder();
+        fFmpegBuilder.setInput(path)
+                .overrideOutputFiles(true)
+                .addOutput(String.format(tempUrl, target.intValue()))
+                .setFormat("mp4")
+                .setPreset("medium")
+                .setVideoBitRate(3000000L)
+                .setVideoCodec("libx264")
+                .setVideoFilter(String.format("\"scale=-1:%d,format=yuv420p\"", target.intValue()))
+                .setAudioCodec("aac")
+                .setAudioBitRate(128000L)
+                .setAudioChannels(2)
+                .setAudioSampleRate(44100);
+        fFmpeg.run(fFmpegBuilder);
+        video.addVideoUrl(String.format(tempUrl, target), target);
+    }
+
 
     @Transactional
     public byte[] loadThumbnail(Long videoId){
@@ -204,10 +264,10 @@ public class VideoService {
 
 
 
-    public ResponseEntity<ResourceRegion> getVideoRegion(String rangeHeader , Long videoId) throws IOException {
+    @Transactional(readOnly = true)
+    public ResponseEntity<ResourceRegion> getVideoRegion(String rangeHeader , Long videoId, Long quality) throws IOException {
         Video video = videoRepository.findById(videoId).get();
-        System.out.println(video.getVideoPath());
-        FileUrlResource videoResource = new FileUrlResource(video.getVideoPath());
+        FileUrlResource videoResource = new FileUrlResource(video.getVideoUrlMap().get(quality));
         ResourceRegion resourceRegion = getResourceRegion(videoResource, rangeHeader);
 
         return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)

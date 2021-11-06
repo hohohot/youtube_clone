@@ -5,6 +5,7 @@ import com.kc.portfolio.mytube.config.auth.dto.SessionUser;
 import com.kc.portfolio.mytube.service.VideoService;
 import com.kc.portfolio.mytube.web.dto.VideoInfoListItemDto;
 import com.kc.portfolio.mytube.web.dto.VideoInfosDto;
+import com.kc.portfolio.mytube.web.dto.VideoResolutionDto;
 import com.kc.portfolio.mytube.web.dto.VideoUploadRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.support.ResourceRegion;
@@ -34,13 +35,14 @@ public class VideoController {
     private final HttpSession httpSession;
     @PostMapping("/postvideo")
     public String postVideo(@RequestParam MultipartFile video, @RequestParam MultipartFile thumbnail,
-                            VideoUploadRequestDto requestDto){
+                            VideoUploadRequestDto requestDto) throws IOException {
 
         SessionUser user = (SessionUser)httpSession.getAttribute("userInfo");
         if(user == null)
             return "redirect:/error/usernotfound";
         System.out.println(System.getProperty("user.dir"));
-        videoService.uploadVideo(video, thumbnail, requestDto, user);
+        Long videoId = videoService.uploadVideo(video, thumbnail, requestDto, user);
+        videoService.postProcess(videoId);
         return "redirect:/";
     }
 
@@ -65,11 +67,13 @@ public class VideoController {
         return new ResponseEntity<byte[]>(videoService.loadThumbnail(videoId), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/streaming/{id}", produces = "application/octet-stream")
-    public ResponseEntity<ResourceRegion> getVideo(@RequestHeader(value = "Range", required = false) String rangeHeader, @PathVariable("id") Long videoId)
+    @GetMapping(value = "/streaming/{id}/{quality}", produces = "application/octet-stream")
+    public ResponseEntity<ResourceRegion> getVideo(@RequestHeader(value = "Range", required = false) String rangeHeader,
+                                                   @PathVariable("id") Long videoId,
+                                                   @PathVariable("quality") Long quality)
             throws IOException {
 
-        return videoService.getVideoRegion(rangeHeader, videoId);
+        return videoService.getVideoRegion(rangeHeader, videoId, quality);
 
     }
 
@@ -85,6 +89,11 @@ public class VideoController {
         return videoService.getVideoInfos(videoId, user);
     }
 
+    @GetMapping("/videoUrlList/{id}")
+    public @ResponseBody  List<VideoResolutionDto> getVideoResolutions(@PathVariable("id") Long videoId){
+        SessionUser user = (SessionUser) httpSession.getAttribute("userInfo");
+        return videoService.getResolutions(videoId);
+    }
 
 
 

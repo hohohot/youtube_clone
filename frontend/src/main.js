@@ -2,6 +2,8 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import VueSession from 'vue-session'
+import 'video.js/dist/video-js.css'
+import VueVideoPlayer from 'vue-video-player'
 
 
 var sessionOptions = {
@@ -9,6 +11,7 @@ var sessionOptions = {
 };
 Vue.use(VueSession, sessionOptions);
 Vue.config.productionTip = false
+Vue.use(VueVideoPlayer, null);
 
 new Vue({
   router,

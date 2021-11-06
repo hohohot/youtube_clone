@@ -6,6 +6,7 @@ import com.kc.portfolio.mytube.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.FFprobe;
 import net.bramp.ffmpeg.probe.FFmpegFormat;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
@@ -18,12 +19,16 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.*;
+import java.util.List;
 
 
 @Getter
 @NoArgsConstructor
 @Entity
 public class Video extends BaseTimeEntity {
+
+    public static final Long RESOLUTIONS[] = {144L, 240L, 360L, 480L, 720L, 1080L};
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,8 +52,12 @@ public class Video extends BaseTimeEntity {
 
     @Column
     private String thumbnailUrl;
-    @Column
-    private String videoPath;
+
+    @ElementCollection
+    @JoinTable(name="VIDEO_URL_MAP", joinColumns=@JoinColumn(name="ID"))
+    @MapKeyColumn (name="RESOLUTION")
+    @Column(name="URL_COLUMN")
+    private Map<Long, String> videoUrlMap = new HashMap<>();
 
     @Column
     private Long likes = 0L;
@@ -67,16 +76,21 @@ public class Video extends BaseTimeEntity {
     public void setThumbnail(String thumbnailUrl){
         this.thumbnailUrl = thumbnailUrl;
     }
-    public void setVideoPath(String videoPath){
-        this.videoPath = videoPath;
-        this.updateRunningTime();
+    public void addVideoUrl(String videoPath, Long resolution){
+        videoUrlMap.put(resolution, videoPath);
     }
-    public void updateRunningTime(){
+    public void updateRunningTime(String path){
         try {
             FFprobe ffprobe = new FFprobe(MytubeApplication.FFPROBE);  //리눅스에 설치되어 있는 ffmpeg 폴더
+
             System.out.println();
-            FFmpegProbeResult probeResult = ffprobe.probe(this.videoPath);
+            FFmpegProbeResult probeResult = ffprobe.probe(path);
             FFmpegFormat format = probeResult.getFormat();
+            System.out.println("probeResult.getStreams().get(0).profile");
+            System.out.println(probeResult.getStreams().get(0).profile);
+            System.out.println(probeResult.getStreams().get(0).codec_long_name);
+            System.out.println(probeResult.getStreams().get(0).codec_tag);
+
             Double second = format.duration;    //초단위
 
             videoLength = second.longValue();
@@ -86,11 +100,11 @@ public class Video extends BaseTimeEntity {
         }
     }
 
-    public void extractThumbnail() {
+    public void extractThumbnail(String path) {
         String tempUrl = System.getProperty("user.dir") + MytubeApplication.VIDEO_PATH + "/" + id + "/extracted.png";
         String str = null;
         String[] cmd = new String[] {MytubeApplication.FFMPEG
-                , "-i", "\""+videoPath + "\"", "-vcodec", "png"
+                , "-i", "\""+path + "\"", "-vcodec", "png"
                 , "-vframes", "1", "-vf", "thumbnail=100"
                 , "\""+tempUrl+"\""};
         Process process = null;

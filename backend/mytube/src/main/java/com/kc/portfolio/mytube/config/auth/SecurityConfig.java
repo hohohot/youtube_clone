@@ -20,9 +20,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers().frameOptions().disable()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/", "recommending_videos/**", "/css/**", "/img/**", "/js/**", "/h2-console/**", "/profile").permitAll()
+                .antMatchers("/comments/postcomments", "/comments/postreplys", "/like_reply/**", "/like_comment/**", "/like_video**", "/postvideo", "/userInfo").authenticated()
                 .antMatchers("/api/v1/**").hasRole(Role.USER.name())
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .logout()
                 .logoutSuccessUrl("/")
@@ -30,5 +30,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .oauth2Login()
                 .userInfoEndpoint()
                 .userService(customOAuth2UserService);
+
+
+        //.antMatchers("/comments/postcomments", "/comments/postreplys", "/like_reply/**", "/like_comment/**", "/like_video**", "/postvideo").authenticated()
+        //.antMatchers("/", "recommending_videos/**", "/css/**", "/img/**", "/js/**", "/h2-console/**", "/profile").authenticated()
     }
 }

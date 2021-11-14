@@ -167,12 +167,12 @@
                 },
                 videoMetaDatas: {
                     userInfoDto: {
-                        profile: "",
-                        userName: "",
-                        email: ""
+                        profileUrl: "a",
+                        userName: "a",
+                        email: "a"
                     },
                     isSubs: false,
-                    description: ""
+                    description: "a"
                 },
                 videoItemList: [
                 ]

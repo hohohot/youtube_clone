@@ -8,8 +8,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.FFprobe;
+import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import net.bramp.ffmpeg.probe.FFmpegFormat;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.imageio.ImageIO;
 import javax.persistence.*;
@@ -79,18 +81,14 @@ public class Video extends BaseTimeEntity {
     public void addVideoUrl(String videoPath, Long resolution){
         videoUrlMap.put(resolution, videoPath);
     }
-    public void updateRunningTime(String path){
+    public void updateRunningTime(String path, String ffprobePath){
         try {
-            FFprobe ffprobe = new FFprobe(MytubeApplication.FFPROBE);  //리눅스에 설치되어 있는 ffmpeg 폴더
-
+            System.out.println("ffprobePath");
+            System.out.println(ffprobePath);
+            FFprobe ffprobe = new FFprobe(ffprobePath);  //리눅스에 설치되어 있는 ffmpeg 폴더
             System.out.println();
             FFmpegProbeResult probeResult = ffprobe.probe(path);
             FFmpegFormat format = probeResult.getFormat();
-            System.out.println("probeResult.getStreams().get(0).profile");
-            System.out.println(probeResult.getStreams().get(0).profile);
-            System.out.println(probeResult.getStreams().get(0).codec_long_name);
-            System.out.println(probeResult.getStreams().get(0).codec_tag);
-
             Double second = format.duration;    //초단위
 
             videoLength = second.longValue();
@@ -100,28 +98,27 @@ public class Video extends BaseTimeEntity {
         }
     }
 
-    public void extractThumbnail(String path) {
+    public void extractThumbnail(String path, String ffmpegPath) throws IOException {
+        System.out.println("------------------extract Thumbnail Start------------------");
         String tempUrl = System.getProperty("user.dir") + MytubeApplication.VIDEO_PATH + "/" + id + "/extracted.png";
         String str = null;
-        String[] cmd = new String[] {MytubeApplication.FFMPEG
-                , "-i", "\""+path + "\"", "-vcodec", "png"
-                , "-vframes", "1", "-vf", "thumbnail=100"
-                , "\""+tempUrl+"\""};
-        Process process = null;
-
+        FFmpeg fFmpeg = new FFmpeg(ffmpegPath);
+        FFmpegBuilder fFmpegBuilder = new FFmpegBuilder();
+        fFmpegBuilder
+                .setInput(path)
+                .addOutput(tempUrl)
+                .setVideoCodec("png")
+                .setFrames(1)
+                .setVideoFilter("thumbnail=100");
         try{
-            process = new ProcessBuilder(cmd).start();
-            // 외부 프로그램의 표준출력 상태 버퍼에 저장
-            BufferedReader stdOut = new BufferedReader( new InputStreamReader(process.getInputStream()) );
-            // 표준출력 상태를 출력
-            while( (str = stdOut.readLine()) != null ) {
-                System.out.println(str);
-            }
+            fFmpeg.run(fFmpegBuilder);
             thumbnailUrl = tempUrl;
         }
         catch (IOException e) {
+            System.out.println("error ffmpeg");
             e.printStackTrace();
         }
+        System.out.println("------------------extract Thumbnail End------------------");
     }
 
     public void postProcesThumbnail() throws IOException {

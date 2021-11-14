@@ -176,7 +176,7 @@
                     <div
                         id="prefilled-dialog-header"
                         class="style-scope ytd-comments-header-renderer"></div>
-                    <div id="simple-box" class="style-scope ytd-comments-header-renderer">
+                    <div id="simple-box" class="style-scope ytd-comments-header-renderer" v-if="userInfo">
                         <ytd-comment-simplebox-renderer
                             class="style-scope ytd-comments-header-renderer">
                             <!--css-build:shady-->
@@ -194,7 +194,7 @@
                                     alt="이섭섭"
                                     height="40"
                                     width="40"
-                                    src="https://yt3.ggpht.com/yti/APfAmoErw2Et1bOnYQOKuvHX3J_2JgVviPNx9n_zJA=s88-c-k-c0x00ffffff-no-rj"/></yt-img-shadow>
+                                    :src="userInfo.profileUrl"/></yt-img-shadow>
                             <div id="placeholder-area" class="style-scope ytd-comment-simplebox-renderer">
                                 <yt-formatted-string
                                     id="simplebox-placeholder"
@@ -328,7 +328,7 @@ export default{
     components:{
         CommentsRootItem
     },
-    created(){
+    mounted(){
         this.updateComments();
         this.updateCommentsNums();
         axios
@@ -342,11 +342,7 @@ export default{
         return {
             commentInput: "",
             commentNum: 0,
-            userInfo :{
-                userName: "Lee ki chan",
-                profileUrl: "https://yt3.ggpht.com/yti/APfAmoErw2Et1bOnYQOKuvHX3J_2JgVviPNx9n_zJA=s88-c-k-c0x00ffffff-no-rj",
-                email: "asdf1234@anve.rom"
-            },
+            userInfo :null,
 
             commentsList: [
                 /*{
@@ -416,7 +412,7 @@ export default{
             }
             return ret;
         }
-    }
+    },
 }
 
 </script>

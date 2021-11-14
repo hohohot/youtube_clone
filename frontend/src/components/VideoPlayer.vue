@@ -1,18 +1,20 @@
 <template>
+<div style="position: relative; width: 100%; height: 0; overflow: hidden; padding-bottom:56.26%;">
     <video
         id="video_1"
         class="video-js vjs-default-skin"
         controls="controls"
         preload="auto"
-        width="1280"
-        height="720"
+        style="position: absolute; width: 100%; height: 100%; top: 0; left: 0;"
         autoplay=""
         data-setup='{}'></video>
+</div>
+    
 </template>
 /*
 <video
     :src="this.videoUrl"
-    style="width: 1280px; height: 720px; left: 0px; top: 0px;"
+    style="width: 100%; height: 100%; left: 0px; top: 0px;"
     controls=""></video>
 */
 <script>
@@ -41,8 +43,7 @@
                 .get(`/videoUrlList/${this.$route.query.id}`)
                 .then(response => {
                     this.player.src(response.data);
-                });
-                    
+                });                    
         }
     }
 </script>

@@ -364,6 +364,7 @@
                                         touch-feedback="">
                                         <!--css-build:shady-->
                                         <button
+                                            v-if="seeModal"
                                             @click="seeModal"
                                             id="button"
                                             class="style-scope yt-icon-button"
@@ -465,7 +466,7 @@
                 }
             }
         },
-        created() {
+        mounted() {
             this.updateKewordList("");
             axios
                 .get('/userInfo')

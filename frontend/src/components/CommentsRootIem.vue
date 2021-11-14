@@ -246,6 +246,7 @@
                                 id="reply-button-end"
                                 class="style-scope ytd-comment-action-buttons-renderer">
                                 <ytd-button-renderer
+                                    v-if="userInfo"
                                     use-keyboard-focused=""
                                     button-renderer="true"
                                     is-paper-button=""
@@ -331,7 +332,7 @@
             ReplyItem,
             ReplyDialog
         },
-        created() {
+        mounted() {
             this.updateReplys();
         },
         data() {

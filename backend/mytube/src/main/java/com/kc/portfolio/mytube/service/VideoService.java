@@ -19,6 +19,8 @@ import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.FFprobe;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.FileUrlResource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.core.io.support.ResourceRegion;
@@ -54,6 +56,10 @@ public class VideoService {
 
     private final KeywordService keywordService;
 
+    @Value("${ffmpeg.ffmpeg.path}")
+    private String ffmpegPath;
+    @Value("${ffmpeg.ffprobe.path}")
+    private String ffprobePath;
 
     @Transactional(readOnly = true)
     public List<VideoResolutionDto> getResolutions(Long videoId){
@@ -127,6 +133,7 @@ public class VideoService {
         String thumbnailFilePath = videoPath+"/"
                 +thumbnail.getResource().getFilename();
 
+        System.out.println(videoFilePath);
         try {
             videoFile.transferTo(
                     new File(videoFilePath));
@@ -137,15 +144,15 @@ public class VideoService {
             e.printStackTrace();
 
         }
-
-        FFprobe ffprobe = new FFprobe(MytubeApplication.FFPROBE);  //리눅스에 설치되어 있는 ffmpeg 폴더
+        FFprobe ffprobe = new FFprobe(ffprobePath);  //리눅스에 설치되어 있는 ffmpeg 폴더
         FFmpegProbeResult probeResult = ffprobe.probe(videoFilePath);
         Long resolution = Long.valueOf(probeResult.streams.get(0).height);
 
         video.addVideoUrl(videoFilePath, resolution);
-        video.updateRunningTime(videoFilePath);
-        if(video.getThumbnailUrl() == null)
-            video.extractThumbnail(videoFilePath);
+        video.updateRunningTime(videoFilePath, ffprobePath);
+        if(video.getThumbnailUrl() == null) {
+            video.extractThumbnail(videoFilePath, ffmpegPath);
+        }
         try {
             video.postProcesThumbnail();
         } catch (IOException e) {
@@ -159,19 +166,30 @@ public class VideoService {
     public void postProcess(Long videoId) throws IOException {
         Video video = videoRepository.findById(videoId).get();
 
-        FFmpeg fFmpeg = new FFmpeg(MytubeApplication.FFMPEG);
+        FFmpeg fFmpeg = new FFmpeg(ffmpegPath);
+
+
 
         Map<Long, String> urlMap = video.getVideoUrlMap();
         String tempUrl = System.getProperty("user.dir") + MytubeApplication.VIDEO_PATH + "/" + videoId + "/resolution%d.mp4";
         Long maxResolution = (Long)video.getVideoUrlMap().keySet().toArray()[0];
+
+
+        FFprobe ffprobe = new FFprobe(ffprobePath);  //리눅스에 설치되어 있는 ffmpeg 폴더
+        FFmpegProbeResult probeResult = ffprobe.probe(urlMap.get(maxResolution));
+        Long height = Long.valueOf(probeResult.streams.get(0).height);
+        Long width = Long.valueOf(probeResult.streams.get(0).width);
         for(int i = 0; i < Video.RESOLUTIONS.length; i++){
             final int temp = i;
             if(Video.RESOLUTIONS[i] <= maxResolution){
                 asyncService.run(()-> {
-                    try {
-                        scaleVideos(videoId, Video.RESOLUTIONS[temp], urlMap.get(maxResolution));
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    while(true){
+                        try {
+                            scaleVideos(videoId, Video.RESOLUTIONS[temp], urlMap.get(maxResolution), width, height);
+                            break;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
             }
@@ -180,19 +198,20 @@ public class VideoService {
 
     @Async
     @Transactional
-    public void scaleVideos(Long videoId, Long target, String path) throws IOException {
+    public void scaleVideos(Long videoId, Long target, String path, Long width, Long height) throws IOException {
         Video video = videoRepository.findById(videoId).get();
-        FFmpeg fFmpeg = new FFmpeg(MytubeApplication.FFMPEG);
+        FFmpeg fFmpeg = new FFmpeg(ffmpegPath);
         String tempUrl = System.getProperty("user.dir") + MytubeApplication.VIDEO_PATH + "/" + videoId + "/resolution%d.mp4";
         FFmpegBuilder fFmpegBuilder = new FFmpegBuilder();
         fFmpegBuilder.setInput(path)
+                .overrideOutputFiles(true)
                 .overrideOutputFiles(true)
                 .addOutput(String.format(tempUrl, target.intValue()))
                 .setFormat("mp4")
                 .setPreset("medium")
                 .setVideoBitRate(3000000L)
                 .setVideoCodec("libx264")
-                .setVideoFilter(String.format("\"scale=-1:%d,format=yuv420p\"", target.intValue()))
+                .setVideoFilter(String.format("\"scale=%d:%d,format=yuv420p\"", width.intValue()*target.intValue()/height.intValue()/2*2, target.intValue()))
                 .setAudioCodec("aac")
                 .setAudioBitRate(128000L)
                 .setAudioChannels(2)
@@ -202,7 +221,7 @@ public class VideoService {
     }
 
 
-    @Transactional
+    @Transactional(readOnly = true)
     public byte[] loadThumbnail(Long videoId){
        String filePath = videoRepository.findById(videoId).get().getThumbnailUrl();
         try {
@@ -223,8 +242,9 @@ public class VideoService {
             video.upView();
             httpSession.setAttribute("haveSeen", haveSeen);
         }
-        User user = userRepository.findByEmail(sessionUser.getEmail()).get();
-        boolean isLiked = !likeVideoRepository.findByUserAndVideo(user,video).isEmpty();
+
+        User user = sessionUser!=null? userRepository.findByEmail(sessionUser.getEmail()).orElse(null): null;
+        boolean isLiked = user!=null? !likeVideoRepository.findByUserAndVideo(user,video).isEmpty() : false;
 
         return VideoInfosDto.builder()
                 .createdDate(video.getCreatedDate())
@@ -257,6 +277,7 @@ public class VideoService {
         video.setLikes(likes);
         return likes;
     }
+
 
 
 

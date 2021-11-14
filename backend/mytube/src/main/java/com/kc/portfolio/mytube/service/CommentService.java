@@ -18,6 +18,7 @@ import com.kc.portfolio.mytube.domain.video.VideoRepository;
 import com.kc.portfolio.mytube.web.dto.CommentsDto;
 import com.kc.portfolio.mytube.web.dto.ReplysDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -72,9 +73,7 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public Long howManyComment(Long videoId){
-        Comment comment = Comment.builder().video(videoRepository.findById(videoId).get()).build();
-        Reply reply = Reply.builder().video(videoRepository.findById(videoId).get()).build();
-        return commentRepository.count(Example.of(comment))+replyRepository.count(Example.of(reply));
+        return commentRepository.countByVideoId(videoId)+replyRepository.countByVideoId(videoId);
     }
 
 

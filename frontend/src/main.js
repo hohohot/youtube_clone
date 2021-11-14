@@ -4,7 +4,9 @@ import router from './router'
 import VueSession from 'vue-session'
 import 'video.js/dist/video-js.css'
 import VueVideoPlayer from 'vue-video-player'
+import VueHead from 'vue-head'
 
+Vue.use(VueHead);
 
 var sessionOptions = {
   persist: true

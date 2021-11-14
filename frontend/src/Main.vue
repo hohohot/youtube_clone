@@ -197,6 +197,11 @@
     import 'url-search-params-polyfill'
 
     export default {
+        head:{
+            meta:[
+                {name:'google-site-verification',  content:"efpp72uEgtEZNO4T9J92MxfkSgNlw9PcTLYYRR_tP04"},
+            ]
+        },
         name: "Main",
         components: {
             'TopView': TopView,
@@ -206,7 +211,10 @@
             'ModalView': ModalView
         },
         data() {
-            return {seeModal: false, videoItemList: []}
+            return {
+                seeModal: false,
+                videoItemList: [],
+                }
         },
         methods: {
             uploadButtonClick() {
@@ -253,7 +261,7 @@
             if(this.$route.query.search != null){
                 console.log(this.$route.query.search);
                 axios
-                .get(`/recommending_videos/0/9`, {params:{keyword:this.$route.query.search}})
+                .get(`/recommending_videos/0/100`, {params:{keyword:this.$route.query.search}})
                 .then(response => {
                     for (var i = 0; i < response.data.length; i++) {
                         console.log(response.data);
@@ -278,7 +286,7 @@
                 });
             }else{
                 axios
-                .get("/recommending_videos/0/9")
+                .get("/recommending_videos/0/100")
                 .then(response => {
                     for (var i = 0; i < response.data.length; i++) {
                         console.log(response.data);
